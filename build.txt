@@ -1,0 +1,10 @@
+author = Flashkirby99
+version = 0.1
+displayName = Build Planner Tools
+homepage = 
+
+hideCode = false
+hideResources = false
+includeSource = true
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, *.suo, *.sln, .git, *.md, .git\*, *.fw.png *.TMP
+includePDB = false
