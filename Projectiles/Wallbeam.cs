@@ -95,7 +95,8 @@ namespace BuildPlanner.Projectiles
 
         public void BreakWalls(int x, int y)
         {
-            if ((projectile.ai[0] - 1) % hammerSpeed != 0) return;
+            if ((projectile.ai[0] - 1) % hammerSpeed != 0) return; // Not digging
+            if ((int)projectile.ai[1] <= 0) return; // No hammer power given...
 
             // How about give me a real man's tile value
             if (!WorldGen.InWorld(x, y, 1)) return;
