@@ -13,6 +13,7 @@ namespace BuildPlanner.Tiles
             Main.tileSolid[Type] = true;
             Main.tileBlockLight[Type] = false; // Doesn't block lights
             Main.tileLavaDeath[Type] = true; // Burrrrn
+            Main.tileBrick[Type] = true; // Merges with other "brick" tiles aka most house tiles
             TileID.Sets.BreakableWhenPlacing[Type] = true; // Can place other tiles over this
             mineResist = 0.01f; // Can be broken basically instantly
             dustType = 7; // Wood
