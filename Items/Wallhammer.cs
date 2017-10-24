@@ -58,5 +58,10 @@ namespace BuildPlanner.Items
             Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, dmg, knockBack, player.whoAmI, 0f, hammer);
             return false;
         }
+
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-10, 2);
+        }
     }
 }

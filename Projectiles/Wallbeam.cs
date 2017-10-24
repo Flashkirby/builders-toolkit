@@ -38,7 +38,7 @@ namespace BuildPlanner.Projectiles
 
             projectile.rotation = projectile.velocity.ToRotation() - 1.57079637f;
             projectile.velocity = Vector2.Normalize(projectile.velocity);
-            projectile.Center = player.Center;
+            projectile.Center = player.Center + projectile.velocity * 16;
 
             float[] sampleArray = new float[2];
             Collision.LaserScan(projectile.Center, projectile.velocity, 0, LaserLengthMax, sampleArray);
