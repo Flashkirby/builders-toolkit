@@ -11,7 +11,7 @@ namespace BuildPlanner.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Wonderhammer");
-            Tooltip.SetDefault("<right> to fire a wall smashing beam\n'Renovation made easy!'");
+            Tooltip.SetDefault("<right> to fire a wall smashing beam\n'Innovating renovation!'");
         }
         public override void SetDefaults()
         {
@@ -53,7 +53,6 @@ namespace BuildPlanner.Items
 			int hammer = 0;
 			if (player.altFunctionUse > 0)
 			{
-				dmg *= 2; // The wall breaker is more powerful because why not
 				hammer = item.hammer;
 			}
             Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, dmg, knockBack, player.whoAmI, 0f, hammer);
