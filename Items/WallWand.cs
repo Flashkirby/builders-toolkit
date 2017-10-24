@@ -42,7 +42,7 @@ namespace BuildPlanner.Items
         }
         public override bool AltFunctionUse(Player player)
         {
-            item.hammer = 67; // Exactly enough to one-shot walls
+            item.hammer = 0; // Don't hammer
             item.createWall = -1;
             item.tileWand = -1;
 
@@ -50,9 +50,17 @@ namespace BuildPlanner.Items
             {
                 try
                 {
-                    if (Main.wallHouse[Main.tile[Player.tileTargetX, Player.tileTargetY].wall]) return true;
+                    if (Main.wallHouse[Main.tile[Player.tileTargetX, Player.tileTargetY].wall])
+                    {
+                        item.hammer = 67; // Exactly enough to one-shot walls
+                        player.poundRelease = false; // Prevent hammering tiles
+                        return true;
+                    }
                 }
-                catch { return false; }
+                catch
+                {
+                    return false;
+                }
             }
             return true;
         }
