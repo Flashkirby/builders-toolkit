@@ -53,7 +53,7 @@ namespace BuildPlanner.Items
             if (player.altFunctionUse <= 0 && item.createTile == -1)
             {
                 item.createTile = mod.GetItem<Scaffold>().item.createTile;
-                item.tileWand = mod.ItemType<ScaffoldWall>();
+                item.tileWand = mod.ItemType<Scaffold>();
                 item.pick = 0;
             }
             return true;
