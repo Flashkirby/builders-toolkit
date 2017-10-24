@@ -35,7 +35,7 @@ namespace BuildPlanner.Tiles
             TileID.Sets.BreakableWhenPlacing[Type] = true; // Can place other tiles over this
             mineResist = 0.01f; // Can be broken basically instantly
             dustType = 7; // Wood
-            AddMapEntry(new Color(185, 122, 87)); // Sort of wood-ish colour
+            AddMapEntry(new Color(200, 150, 120)); // Sort of light wood-ish colour
             disableSmartCursor = true; // Smartcursor doesn't target platforms as a block
             adjTiles = new int[] { TileID.Platforms }; // Yes this is a platform tile thankyou
 
@@ -58,7 +58,7 @@ namespace BuildPlanner.Tiles
         {
             Main.wallHouse[Type] = true; // housing wall can be destroyed anywhere
             Main.wallLight[Type] = true; // Lets all light though (as opposed to WallID.Sets.Transparent)
-            AddMapEntry(new Color(110, 80, 60)); // Sort of dark wood-ish colour
+            AddMapEntry(new Color(190, 80, 60)); // Sort of dark wood-ish colour
         }
     }
 }
