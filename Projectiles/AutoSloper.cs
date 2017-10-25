@@ -9,7 +9,7 @@ namespace BuildPlanner.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sloper");
+            DisplayName.SetDefault("Slope Tool");
         }
         public override void SetDefaults()
         {
@@ -18,8 +18,8 @@ namespace BuildPlanner.Projectiles
             projectile.aiStyle = -1;
             projectile.friendly = true;
             projectile.penetrate = -1;
-            projectile.alpha = 105;
-            projectile.timeLeft = 10;
+            projectile.alpha = 100;
+            projectile.timeLeft = 6;
             projectile.tileCollide = false;
         }
 
@@ -41,7 +41,7 @@ namespace BuildPlanner.Projectiles
 
             }
 
-            projectile.alpha += 10;
+            projectile.alpha += 20;
             projectile.localAI[0]++;
         }
 
