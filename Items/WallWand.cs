@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,20 +14,12 @@ namespace BuildPlanner.Items
         }
         public override void SetDefaults()
         {
-            Scaffold.SetDefaultsBasic(item);
-            item.consumable = false;
-            item.maxStack = 1;
+            TileWand.WandDefaults(item);
             item.useAnimation = 2;
-            item.useTime = 1;
-            item.useStyle = 5;
 
             item.tileBoost = 12;
             item.tileWand = mod.ItemType<ScaffoldWall>();
             item.createWall = mod.GetItem<ScaffoldWall>().item.createWall;
-
-            item.value = Item.sellPrice(0, 1, 0, 0);
-            item.rare = 2;
-            item.autoReuse = true;
         }
         public override void AddRecipes()
         {
@@ -36,6 +29,7 @@ namespace BuildPlanner.Items
             r.AddRecipe();
         }
 
+        public override Vector2? HoldoutOffset() { return new Vector2(2, 0); }
         public override void UpdateInventory(Player player)
         {
             player.rulerGrid = true;
