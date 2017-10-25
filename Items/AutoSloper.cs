@@ -26,7 +26,7 @@ namespace BuildPlanner.Items
             item.width = 20;
             item.height = 20;
             item.shoot = mod.ProjectileType<Projectiles.AutoSloper>();
-            item.value = Item.sellPrice(0, 0, 30, 0);
+            item.value = Item.buyPrice(0, 15, 0, 0);
         }
         public override bool AltFunctionUse(Player player) { return true; }
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
