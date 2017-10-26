@@ -35,7 +35,7 @@ namespace BuildPlanner.Projectiles
                 {
                     for (int x = -2; x < 3; x++)
                     {
-                        ManageTileSlope(tilePos.X + x, tilePos.Y + y, hammerSlope);
+                        ManageTileSlope(tilePos.X + x, tilePos.Y + y, projectile.owner, hammerSlope);
                     }
                 }
 
@@ -45,12 +45,16 @@ namespace BuildPlanner.Projectiles
             projectile.localAI[0]++;
         }
 
-        public static void ManageTileSlope(int x, int y, bool hammerSlope = true)
+        public static void ManageTileSlope(int x, int y, int client, bool hammerSlope = true)
         {
             if (!WorldGen.InWorld(x, y, 1)) return;
             Tile t = Main.tile[x, y];
             if (!WorldGen.SolidOrSlopedTile(x, y)) return; // Ignore non-slopable tiles
             if (t.halfBrick()) return; // Ignore half tiles
+
+            bool sendNetMessage = 
+                (Main.netMode == 2 && client == 255) || 
+                (Main.netMode == 1 && client == Main.myPlayer);
 
             // Removing Slopes
             if (!hammerSlope)
@@ -58,7 +62,7 @@ namespace BuildPlanner.Projectiles
                 if (t.slope() != Tile.Type_Solid)
                 {
                     WorldGen.SlopeTile(x, y, Tile.Type_Solid);
-                    if (Main.netMode == 2)
+                    if (sendNetMessage)
                     { NetMessage.SendData(MessageID.TileChange, -1, -1, null, 14, x, y, 0f, 0, 0, 0); }
 
                     // Direction Dust
@@ -103,7 +107,7 @@ namespace BuildPlanner.Projectiles
 
                 // Apply sloping
                 WorldGen.SlopeTile(x, y, slope);
-                if (Main.netMode == 2)
+                if (sendNetMessage)
                 { NetMessage.SendData(MessageID.TileChange, -1, -1, null, 14, x, y, 0f, 0, 0, 0); }
 
                 // Direction Dust

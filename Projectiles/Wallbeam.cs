@@ -124,33 +124,37 @@ namespace BuildPlanner.Projectiles
             AchievementsHelper.CurrentlyMining = true;
 
             // Try 3 times to make sure we kill it guaranteed or not at all
-            bool killed = false;
+            bool failed = true;
             for (int i = 0; i < 3; i++)
             {
                 if (player.hitTile.AddDamage(tileId, itemTilePower, true) >= 100)
                 {
                     player.hitTile.Clear(tileId);
-                    killed = true;
+                    failed = false;
+                    break;
                 }
                 else
                 {
-                    killed = false;
+                    failed = true;
                 }
             }
-            if (killed)
+            bool sendNetMessage =
+                (Main.netMode == 2 && projectile.owner == 255) ||
+                (Main.netMode == 1 && projectile.owner == Main.myPlayer);
+            if (failed)
             {
                 WorldGen.KillWall(x, y, true);
-                if (Main.netMode != 0)
+                if (sendNetMessage)
                 {
-                    NetMessage.SendData(17, -1, -1, null, 0, (float)x, (float)y, 1f, 0, 0, 0);
+                    NetMessage.SendData(17, -1, -1, null, 2, (float)x, (float)y, 1f, 0, 0, 0);
                 }
             }
             else
             {
                 WorldGen.KillWall(x, y, false);
-                if (Main.netMode != 0)
+                if (sendNetMessage)
                 {
-                    NetMessage.SendData(17, -1, -1, null, 0, (float)x, (float)y, 0f, 0, 0, 0);
+                    NetMessage.SendData(17, -1, -1, null, 2, (float)x, (float)y, 0f, 0, 0, 0);
                 }
             }
 

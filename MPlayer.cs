@@ -84,8 +84,10 @@ namespace BuildPlanner
             }
             else
             {
-                Main.tile[tileX, tileY].wall = 0; // soft remove
+                Main.tile[tileX,tileY].wall = 0;
+                Main.tile[tileX, tileY].wallColor(0);
                 WorldGen.PlaceWall(tileX, tileY, item.createWall, false);
+                WallLoader.PlaceInWorld(tileX, tileY, item);
                 if (Main.netMode == 1)
                 {
                     NetMessage.SendData(17, -1, -1, null, 3, tileX, tileY, (float)item.createWall, 0, 0, 0);
@@ -111,12 +113,19 @@ namespace BuildPlanner
             if (mode == 255) return null;
 
             int tileRange = 64 + player.blockRange * 8;
-            for (int y = tileRange; y >= -tileRange - 1; y--) //bottom up
+            int tileX, tileY;
+            for (int y = 0; y < 1 + tileRange * 2; y++)  //bottom up
             {
-                for (int x = -tileRange; x < tileRange + 1; x++) // L2R
+                if (y % 2 == 0)
+                { tileY = Player.tileTargetY + y / 2; }
+                else
+                { tileY = Player.tileTargetY + (y + 1) / -2; }
+                for (int x = 0; x < 1 + tileRange * 2; x++)// L2R
                 {
-                    int tileX = Player.tileTargetX + x;
-                    int tileY = Player.tileTargetY + y;
+                    if (x % 2 == 0)
+                    { tileX = Player.tileTargetX + x / 2; }
+                    else
+                    { tileX = Player.tileTargetX + (x + 1) / -2; }
                     if (!WorldGen.InWorld(tileX, tileY, 1)) { continue; }
                     Tile t = Main.tile[tileX, tileY];
 
@@ -156,17 +165,19 @@ namespace BuildPlanner
             if (item.createTile < 0 && item.createWall < 0) return false;
             if (item.createTile == mod.TileType<Tiles.Scaffold>() ||
                 item.createTile == mod.TileType<Tiles.ScaffoldPlatform>() ||
-                item.createWall == mod.WallType<Tiles.ScaffoldWall>()) return false; 
+                item.createWall == mod.WallType<Tiles.ScaffoldWall>()) return false;
             // No point adding scaffolding to scaffolding
 
             if (item.tileWand >= 0)
             {
                 foreach (Item i in player.inventory)
                 {
-                    if (i.active && i.stack > 0 && i.type == item.tileWand) return true;
+                    if (i.active && i.stack > 0 && i.type == item.tileWand)
+                    { return true; }
                 }
                 return false;
             }
+            else if (item.stack <= 0) return false;
             return true;
         }
         /// <summary> Consumes a unit of the item, or its ammo for tile wands </summary>
