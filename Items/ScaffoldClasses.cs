@@ -22,7 +22,8 @@ namespace BuildPlanner.Items
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Scaffolding Block");
-		}
+            Tooltip.SetDefault("Can be replaced with other blocks");
+        }
 		public override void SetDefaults()
         {
             Scaffold.SetDefaultsBasic(item);
@@ -51,6 +52,7 @@ namespace BuildPlanner.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Scaffolding Platform");
+            Tooltip.SetDefault("Can be replaced with other blocks");
         }
         public override void SetDefaults()
         {

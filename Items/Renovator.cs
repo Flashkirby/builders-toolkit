@@ -12,7 +12,7 @@ namespace BuildPlanner.Items
             DisplayName.SetDefault("Furious Worldforge"); // Name blessed by the man himself (27/10/17)
             Tooltip.SetDefault(
                 "Replaces nearby scaffolding\n" +
-                "Painted scaffolding filtered by paint\n" +
+                "Only replaces tiles with matching paint\n" +
                 "'To use: Place blocks/walls in the forge'");
         }
         public override void SetDefaults()

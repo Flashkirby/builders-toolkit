@@ -4,6 +4,8 @@ List:
 Sloping tool owner sync (untested)
 Test worldforge with wire
 Tree graphic cycler
+Architect Try Square
+Architect Compass
 Ambient objects craftable at an "Ancient Sundial"
 https://terraria.gamepedia.com/Ambient_objects
 
