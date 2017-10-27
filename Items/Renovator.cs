@@ -9,7 +9,7 @@ namespace BuildPlanner.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Furious Worldforge");
+            DisplayName.SetDefault("Furious Worldforge"); // Name blessed by the man himself (27/10/17)
             Tooltip.SetDefault(
                 "Replaces nearby scaffolding\n" +
                 "Painted scaffolding filtered by paint\n" +

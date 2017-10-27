@@ -1,9 +1,14 @@
 Tools to make builds, large and small, less painful.
 
-bugs to fix:
-Sloping tool not syncing on first slope use for owning client, server and other clients are fine(unslope is fine)
-renovator walls not replacing on server
-Wonderhammer doesn't destroy walls on server (breaking tiles instead)
+List:
+Sloping tool owner sync (untested)
+Test worldforge with wire
+Tree graphic cycler
+Ambient objects craftable at an "Ancient Sundial"
+https://terraria.gamepedia.com/Ambient_objects
+
+Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
+	
 
 Credits:
 Flashkirby99 - I am making this mod.
