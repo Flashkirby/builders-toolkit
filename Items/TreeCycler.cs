@@ -186,7 +186,7 @@ namespace BuildPlanner.Items
         #region Draws
         public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if (Main.mouseText || Main.playerInventory || Main.HoveringOverAnNPC) return;
+            if (Main.mouseText || Main.playerInventory || Main.HoveringOverAnNPC || Main.signHover != -1) return;
             if (!CanUseItem(Main.LocalPlayer)) return;
             if (Main.LocalPlayer.HeldItem.type != item.type) return;
             string current = "";

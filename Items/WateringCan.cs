@@ -15,13 +15,14 @@ namespace BuildPlanner.Items
 		{
 			item.width = 22;
 			item.height = 22;
-			item.maxStack = 99;
+			//item.maxStack = 99;
 			item.rare = 1;
+            item.tileBoost = 24;
 			item.useAnimation = 15;
 			item.useTime = 10;
 			item.useStyle = 1;
 			item.UseSound = SoundID.Item81;
-			item.consumable = true;
+			//item.consumable = true;
 		}
 
 		public override bool CanUseItem(Player player)
@@ -29,18 +30,24 @@ namespace BuildPlanner.Items
 			return TileLoader.IsSapling(Main.tile[Player.tileTargetX, Player.tileTargetY].type);
 		}
 
-		// Note that this item does not work in Multiplayer, but serves as a learning tool for other things.
-		public override bool UseItem(Player player)
-		{
-			if (WorldGen.GrowTree(Player.tileTargetX, Player.tileTargetY))
-			{
-				WorldGen.TreeGrowFXCheck(Player.tileTargetX, Player.tileTargetY);
-			}
-			else
-			{
-				item.stack++;
-			}
-			return true;
-		}
+        public override bool AltFunctionUse(Player player) { return true; }
+        // Note that this item does not work in Multiplayer, but serves as a learning tool for other things.
+        public override bool UseItem(Player player)
+        {
+            if (player.altFunctionUse > 0)
+            {
+                bool check = WorldGen.GrowLivingTree(Player.tileTargetX, Player.tileTargetY);
+                Main.NewText("Grow a living tree = " + check);
+            }
+            else if (WorldGen.GrowTree(Player.tileTargetX, Player.tileTargetY))
+            {
+                WorldGen.TreeGrowFXCheck(Player.tileTargetX, Player.tileTargetY);
+            }
+            else
+            {
+                //item.stack++;
+            }
+            return true;
+        }
 	}
 }

@@ -10,7 +10,7 @@ namespace BuildPlanner.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("The Architect: Blocks");
+            DisplayName.SetDefault("Constructinator: Blocks");
             Tooltip.SetDefault("Places Scaffolding\n<right> to mine tiles");
         }
         public static void WandDefaults(Item item)
@@ -68,7 +68,7 @@ namespace BuildPlanner.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("The Architect: Walls");
+            DisplayName.SetDefault("Constructinator: Walls");
             Tooltip.SetDefault("Places Scaffolding\n<right> to remove housing\n");
         }
         public override void SetDefaults()
