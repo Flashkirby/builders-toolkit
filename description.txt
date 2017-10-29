@@ -3,10 +3,14 @@ Tools to make builds, large and small, less painful.
 List:
 Architect Try Square
 Architect Compass
+Dryad's Watering Can (fire swirling green wave, grows saplings, uses purification powder)
 Worldgen.GrowLivingTree
+	or, projectile with X, Y and treeX[0] as gen seed
+	
 Ambient objects craftable at an "Ancient Sundial"
 https://terraria.gamepedia.com/Ambient_objects
 Change worldforge to use anvil noise :)
+
 
 Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
 	

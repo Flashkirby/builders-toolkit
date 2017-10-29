@@ -1,6 +1,6 @@
 author = Flashkirby99
 version = 0.1
-displayName = Build Planner Tools
+displayName = Builder's Toolbox
 homepage = https://forums.terraria.org/index.php?members/flashkirby99.10265/
 
 hideCode = false

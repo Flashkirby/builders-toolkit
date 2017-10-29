@@ -25,7 +25,7 @@ namespace BuildPlanner.Items
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Titanic Terraformer");
+            DisplayName.SetDefault("Topiary Terraformer");
             Tooltip.SetDefault("Cycles the biome style of the current area\n" +
                 "<right> to cycle in reverse\n" +
                 "Can be used in the Forest, Snow and Jungle");
