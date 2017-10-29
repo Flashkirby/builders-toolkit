@@ -1,13 +1,12 @@
 Tools to make builds, large and small, less painful.
 
 List:
-Sloping tool owner sync (untested)
-Test worldforge with wire
-Tree graphic cycler
 Architect Try Square
 Architect Compass
+Worldgen.GrowLivingTree
 Ambient objects craftable at an "Ancient Sundial"
 https://terraria.gamepedia.com/Ambient_objects
+Change worldforge to use anvil noise :)
 
 Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
 	

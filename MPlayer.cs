@@ -3,6 +3,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using BuildPlanner.Items;
+
 namespace BuildPlanner
 {
     public class MPlayer : ModPlayer
@@ -12,10 +14,18 @@ namespace BuildPlanner
         public override void OnEnterWorld(Player player)
         {
             ScaffoldType = mod.GetTile<Tiles.Scaffold>().Type;
+            TreeCycler.localForestCooldown = 0;
+            TreeCycler.localSnowCooldown = 0;
+            TreeCycler.localJungleCooldown = 0;
         }
         public override bool PreItemCheck()
         {
             if (player.whoAmI != Main.myPlayer) return true;
+
+            // TreeCycler internal cooldown
+            if (TreeCycler.localForestCooldown > 0) TreeCycler.localForestCooldown--;
+            if (TreeCycler.localSnowCooldown > 0) TreeCycler.localSnowCooldown--;
+            if (TreeCycler.localJungleCooldown > 0) TreeCycler.localJungleCooldown--;
 
             // Demolition Hammer removes scaffolding super ez
             if (ScaffoldType > 0 && player.HeldItem.type == ItemID.Rockfish)
