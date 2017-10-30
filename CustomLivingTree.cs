@@ -12,7 +12,6 @@ namespace BuildPlanner
         private static ushort TileWoodTree = TileID.LivingWood;
         private static ushort TileLeafTree = TileID.LeafBlock;
         private static byte WallWoodTree = WallID.LivingWood;
-        private static ushort TileVine = TileID.Vines;
         public static bool GrowLivingTree(int tX, int tY)
         {
             /* Treetop with branches at random alternating intervals
@@ -42,7 +41,6 @@ namespace BuildPlanner
             TileWoodTree = TileID.LivingWood;
             TileLeafTree = TileID.LeafBlock;
             WallWoodTree = WallID.LivingWood;
-            TileVine = TileID.Vines;
             for (int i = 1; i <= 3; i++)
             {
                 for (int j = 0; j <= 1; j++)
@@ -53,7 +51,6 @@ namespace BuildPlanner
                         TileWoodTree = TileID.LivingMahogany;
                         TileLeafTree = TileID.LivingMahoganyLeaves;
                         WallWoodTree = WallID.LivingWood;
-                        TileVine = TileID.JungleVines;
                         break;
                     }
                 }
@@ -85,6 +82,14 @@ namespace BuildPlanner
 
             // Grow FX and Vines
             GrowVineAndGores(tX, tY, genRand);
+
+            for (int x = trunkLeft; x <= trunkRight; x++)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Dust d = Dust.NewDustDirect(new Point(x, tX).ToWorldCoordinates(0, 0), 16, 16, 7, Main.rand.Next(-30, 31) * 0.1f, -4 * i, 150, default(Color), 2f);
+                }
+            }
 
             Tiles.MegaAcorn.noItemDrop = false;
 
@@ -229,18 +234,23 @@ namespace BuildPlanner
                 {
                     if (Main.tile[x, y].type == TileLeafTree && WorldGen.TileEmpty(x, y + 1))
                     {
-                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(4), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
-                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(8), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
-                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(12), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
+                        int gore = GoreID.TreeLeaf_Normal;
+                        if (TileLeafTree == TileID.LivingMahoganyLeaves) gore = GoreID.TreeLeaf_Jungle;
+                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(4), Utils.RandomVector2(Main.rand, -10, 0), gore, 0.7f + Main.rand.NextFloat() * 0.6f);
+                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(8), Utils.RandomVector2(Main.rand, -5, 5), gore, 0.7f + Main.rand.NextFloat() * 0.6f);
+                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(12), Utils.RandomVector2(Main.rand, 0, 10), gore, 0.7f + Main.rand.NextFloat() * 0.6f);
 
                         // Make vines on the bottom of leaves. Stop vines being right next to each other
-                        if (genRand.Next(0, 3) == 0 && adjacentVineX + 1 < x)
+                        if (TileLeafTree == TileID.LeafBlock)
                         {
-                            adjacentVineX = x;
-                            for (int vineLength = 0; vineLength < genRand.Next(1, 11); vineLength++)
+                            if (adjacentVineX + 1 < x && genRand.Next(0, 3) == 0)
                             {
-                                if (WorldGen.TileEmpty(x, y + 1 + vineLength))
-                                { PlaceTreeTile(x, y + 1 + vineLength, TileVine); }
+                                adjacentVineX = x;
+                                for (int vineLength = 0; vineLength <= genRand.Next(1, 11); vineLength++)
+                                {
+                                    if (WorldGen.TileEmpty(x, y + 1 + vineLength))
+                                    { PlaceTreeTile(x, y + 1 + vineLength, TileID.Vines); }
+                                }
                             }
                         }
                     }
