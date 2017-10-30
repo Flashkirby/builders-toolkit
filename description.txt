@@ -33,7 +33,7 @@ scaffold block/wall/platform
 bugs todo:
 check sloper in mp
 check living tree sync + fx (also mp)
-trunk doesn't shrink
+Mahogany throw a CTD?
 
 
 Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/

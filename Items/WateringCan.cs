@@ -29,7 +29,7 @@ namespace BuildPlanner.Items
 
         public override bool CanUseItem(Player player)
         {
-            return TileLoader.IsSapling(Main.tile[Player.tileTargetX, Player.tileTargetY].type);
+            return TileLoader.IsSapling(Main.tile[Player.tileTargetX, Player.tileTargetY].type) || Main.tile[Player.tileTargetX, Player.tileTargetY].type == mod.TileType("MegaAcorn");
         }
 
         public override bool AltFunctionUse(Player player) { return true; }

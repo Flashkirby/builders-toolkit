@@ -8,9 +8,10 @@ namespace BuildPlanner
 {
     public class CustomLivingTree
     {
-        private static ushort TileWoodTree = 0;
-        private static ushort TileLeafTree = 0;
-        private static ushort TileWoodBack = 0;
+        private static ushort TileWoodTree = TileID.LivingWood;
+        private static ushort TileLeafTree = TileID.LeafBlock;
+        private static byte WallWoodTree = WallID.LivingWood;
+        private static ushort TileVine = TileID.Vines;
         public static bool GrowLivingTree(int tX, int tY)
         {
             /* Treetop with branches at random alternating intervals
@@ -36,20 +37,22 @@ namespace BuildPlanner
                     }
                 }
             }
-
-            TileWoodTree = Main.tile[tX, tY + 1].type;
-            TileLeafTree = 0;
-            TileWoodBack = 0;
-            if (TileWoodTree == TileID.JungleGrass)
+            
+            TileWoodTree = TileID.LivingWood;
+            TileLeafTree = TileID.LeafBlock;
+            WallWoodTree = WallID.LivingWood;
+            TileVine = TileID.Vines;
+            for (int i = 1; i <= 3; i++)
             {
-                TileWoodTree = TileID.LivingMahogany;
-                TileLeafTree = TileID.LivingMahoganyLeaves;
-            }
-            else
-            {
-                TileWoodTree = TileID.LivingWood;
-                TileLeafTree = TileID.LeafBlock;
-                TileWoodBack = WallID.LivingWood;
+                if (Main.tile[tX, tY + i] == null) continue;
+                if (Main.tile[tX, tY + i].type == TileID.JungleGrass)
+                {
+                    TileWoodTree = TileID.LivingMahogany;
+                    TileLeafTree = TileID.LivingMahoganyLeaves;
+                    WallWoodTree = WallID.LivingWood;
+                    TileVine = TileID.JungleVines;
+                    break;
+                }
             }
 
             // Set initial trunk width between 3 and 5
@@ -61,9 +64,11 @@ namespace BuildPlanner
             if (growDir > 0) trunkRight++;
             else trunkLeft--;
 
+            Tiles.MegaAcorn.noItemDrop = true; // HACK: killtile no itemdrop doesn't trigger on multikill tile
+
             // Grow the trunk
-            Point treeTop = GrowTrunkUp(tY, genRand, trunkLeft, trunkRight, growDir);
-            
+            Point treeTop = GrowTrunkUp(tY + 1, genRand, trunkLeft, trunkRight, growDir);
+
             // Add branches
             GrowBranches(tX, tY, genRand, treeTop.Y);
 
@@ -71,34 +76,13 @@ namespace BuildPlanner
             GrowTreeTop(treeTop.X, treeTop.Y, genRand);
 
             // Grow Roots
-            GrowRoots(trunkLeft, tY, genRand, trunkRight - trunkLeft + 1, false);
-            GrowRoots(trunkLeft, tY + 1, genRand, trunkRight - trunkLeft + 1, true);
+            GrowRoots(trunkLeft, tY + 2, genRand, trunkRight - trunkLeft + 1, false);
+            GrowRoots(trunkLeft, tY + 3, genRand, trunkRight - trunkLeft + 1, true);
 
             // Grow FX and Vines
-            int adjacentVineX = -1;
-            for (int x = tX - 25; x <= tX + 25; x++)
-            {
-                for (int y = 5; y < tY; y++)
-                {
-                    if (Main.tile[x, y].type == TileLeafTree && WorldGen.TileEmpty(x, y + 1))
-                    {
-                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(4), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
-                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(8), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
-                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(12), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
+            GrowVineAndGores(tX, tY, genRand);
 
-                        // Make vines on the bottom of leaves. Stop vines being right next to each other
-                        if (genRand.Next(0, 4) == 0 && adjacentVineX + 1 < x)
-                        {
-                            adjacentVineX = x;
-                            for (int vineLength = 0; vineLength < genRand.Next(1, 11); vineLength++)
-                            {
-                                if (WorldGen.TileEmpty(x, y + 1 + vineLength))
-                                { PlaceTreeTile(x, y + 1 + vineLength, TileID.Vines); }
-                            }
-                        }
-                    }
-                }
-            }
+            Tiles.MegaAcorn.noItemDrop = false;
 
             if (Main.netMode != 1)
             {
@@ -125,7 +109,7 @@ namespace BuildPlanner
                 if (growHeightCounter > genRand.Next(5, 30)) // guaranteed growth up between 10 and 15 tiles
                 {
                     growHeightCounter = 0;
-                    if (growDir > 0) 
+                    if (growDir > 0)
                     { trunkLeft++; }
                     else
                     { trunkRight--; }
@@ -142,7 +126,7 @@ namespace BuildPlanner
                 for (int x = trunkLeft; x <= trunkRight; x++)
                 {
                     if (x > trunkLeft && x < trunkRight)
-                    { PlaceTreeBackground(x, tY - i, TileWoodTree); }
+                    { PlaceTreeBackground(x, tY - i, WallWoodTree); }
                     PlaceTreeTile(x, tY - i, TileWoodTree);
                 }
             }
@@ -220,16 +204,45 @@ namespace BuildPlanner
                     if (!wall)
                     { PlaceTreeTile((int)rootX, (int)rootY, TileWoodTree); }
                     else
-                    { PlaceTreeBackground((int)rootX, (int)rootY, WallID.LivingWood); }
+                    { PlaceTreeBackground((int)rootX, (int)rootY, WallWoodTree); }
 
                     rootY += 0.3f + 0.1f * genRand.Next(8);
                     if (!wall)
                     { PlaceTreeTile((int)rootX, (int)rootY, TileWoodTree); }
                     else
-                    { PlaceTreeBackground((int)rootX, (int)rootY, WallID.LivingWood); }
+                    { PlaceTreeBackground((int)rootX, (int)rootY, WallWoodTree); }
                 }
             }
         }
+        /// <summary> Grows vines and drops leaf gores </summary>
+        private static void GrowVineAndGores(int tX, int tY, Random genRand)
+        {
+            int adjacentVineX = -1;
+            for (int x = tX - 25; x <= tX + 25; x++)
+            {
+                for (int y = 5; y < tY; y++)
+                {
+                    if (Main.tile[x, y].type == TileLeafTree && WorldGen.TileEmpty(x, y + 1))
+                    {
+                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(4), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
+                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(8), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
+                        Gore.NewGore(new Point(x, y + 1).ToWorldCoordinates(12), Utils.RandomVector2(Main.rand, -10, 10), GoreID.TreeLeaf_Normal, 0.7f + Main.rand.NextFloat() * 0.6f);
+
+                        // Make vines on the bottom of leaves. Stop vines being right next to each other
+                        if (genRand.Next(0, 3) == 0 && adjacentVineX + 1 < x)
+                        {
+                            adjacentVineX = x;
+                            for (int vineLength = 0; vineLength < genRand.Next(1, 11); vineLength++)
+                            {
+                                if (WorldGen.TileEmpty(x, y + 1 + vineLength))
+                                { PlaceTreeTile(x, y + 1 + vineLength, TileVine); }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary> Branch extends out, with occasional stubs, moving up a tile or two </summary>
         private static void AddBranch(int tX, int tY, Random genRand, int baseLeafHeight, int addLeafHeight, int baseLength, int addLength, int direction = 0, bool delayLeaves = true)
         {
@@ -274,7 +287,7 @@ namespace BuildPlanner
                 { GrowLeavesAroundTile(branchX, branchY, genRand.Next(baseLeafHeight, baseLeafHeight + addLeafHeight + 1)); }
             }
         }
-
+        /// <summary> Grows leaves in a diamond shape around the tile </summary>
         private static void GrowLeavesAroundTile(int x, int y, int radius)
         {
             for (int tY = -radius; tY <= radius; tY++)
@@ -289,9 +302,10 @@ namespace BuildPlanner
 
         private static bool PlaceTreeTile(int x, int y, ushort type, int style = 0)
         {
-            Tile t = Main.tile[x, y];
-            if (t != null)
+            if (!WorldGen.InWorld(x, y, 1)) return false;
+            if (Main.tile[x, y] != null)
             {
+                Tile t = Main.tile[x, y];
                 if (WorldGen.SolidTile(x, y))
                 {
                     // Leablocks can only be on empty air
@@ -305,24 +319,28 @@ namespace BuildPlanner
                         t.type != TileID.Copper && t.type != TileID.Tin &&
                         t.type != TileID.Iron && t.type != TileID.Lead &&
                         t.type != TileID.Silver && t.type != TileID.Tungsten &&
-                        Main.tileLavaDeath[t.type]) return false;
+                        t.type != TileID.HallowedGrass) return false;
+                    if (t.type < Main.tileLavaDeath.Length && Main.tileLavaDeath[t.type]) return false;
                 }
             }
+            else { Main.tile[x, y] = new Tile(); }
+
             WorldGen.KillTile(x, y, false, false, true);
             WorldGen.PlaceTile(x, y, type, false, true, -1, style);
             Main.tile[x, y].slope(0);
             return true;
         }
-
-        private static bool PlaceTreeBackground(int x, int y, ushort type)
+        private static bool PlaceTreeBackground(int x, int y, byte type)
         {
-            Tile t = Main.tile[x, y];
-            if (t != null)
+            if (!WorldGen.InWorld(x, y, 1)) return false;
+            if (Main.tile[x, y] != null)
             {
-                if (Main.wallHouse[t.wall]) return false;
+                Tile t = Main.tile[x, y];
+                if (t.wall < Main.wallHouse.Length && Main.wallHouse[t.wall]) return false;
             }
-            Main.tile[x, y].wall = 0;
-            Main.tile[x, y].wallColor(0);
+            else { Main.tile[x, y] = new Tile(); }
+
+            WorldGen.KillWall(x, y);
             WorldGen.PlaceWall(x, y, type, false);
             return true;
         }
