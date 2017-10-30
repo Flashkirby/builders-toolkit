@@ -1,34 +1,36 @@
+using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BuildPlanner.Items
 {
-	public class WateringCan : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
-			Tooltip.SetDefault("Speeds up tree growth");
-		}
+    public class WateringCan : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Speeds up tree growth");
+        }
 
-		public override void SetDefaults()
-		{
-			item.width = 22;
-			item.height = 22;
-			//item.maxStack = 99;
-			item.rare = 1;
+        public override void SetDefaults()
+        {
+            item.width = 22;
+            item.height = 22;
+            //item.maxStack = 99;
+            item.rare = 1;
             item.tileBoost = 24;
-			item.useAnimation = 15;
-			item.useTime = 10;
-			item.useStyle = 1;
-			item.UseSound = SoundID.Item81;
-			//item.consumable = true;
-		}
+            item.useAnimation = 15;
+            item.useTime = 10;
+            item.useStyle = 1;
+            item.UseSound = SoundID.Item81;
+            //item.consumable = true;
+        }
 
-		public override bool CanUseItem(Player player)
-		{
-			return TileLoader.IsSapling(Main.tile[Player.tileTargetX, Player.tileTargetY].type);
-		}
+        public override bool CanUseItem(Player player)
+        {
+            return TileLoader.IsSapling(Main.tile[Player.tileTargetX, Player.tileTargetY].type);
+        }
 
         public override bool AltFunctionUse(Player player) { return true; }
         // Note that this item does not work in Multiplayer, but serves as a learning tool for other things.
@@ -36,8 +38,7 @@ namespace BuildPlanner.Items
         {
             if (player.altFunctionUse > 0)
             {
-                bool check = WorldGen.GrowLivingTree(Player.tileTargetX, Player.tileTargetY);
-                Main.NewText("Grow a living tree = " + check);
+                CustomLivingTree.GrowLivingTree(Player.tileTargetX, Player.tileTargetY);
             }
             else if (WorldGen.GrowTree(Player.tileTargetX, Player.tileTargetY))
             {
@@ -49,5 +50,7 @@ namespace BuildPlanner.Items
             }
             return true;
         }
-	}
+
+
+    }
 }

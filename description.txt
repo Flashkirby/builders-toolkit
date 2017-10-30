@@ -1,25 +1,39 @@
 Tools to make builds, large and small, less painful.
 
 List:
-Architect Try Square
-Architect Compass
-
-	Mode (Add/remove)
-	Draw Type
-		Tile (line)
-		Tile (square)
-		Tile (circle)
-		Platform (horizontal + vertical line)
-		Platform (horizontal + diagonal line)
-		Wall (back fill square)
-	
+The Architect 
+    Mode (Add/remove)
+    Draw Type
+        Tile (line - ruler)
+        Tile (square - Try Square)
+        Tile (circle - Compass)
+        Platform (horizontal + vertical line)
+        Platform (horizontal + diagonal line)
+        Wall (back fill square)
+    
 Dryad's Watering Can (fire swirling green wave, grows saplings, uses purification powder)
 Worldgen.GrowLivingTree
-	or, projectile with X, Y and treeX[0] as gen seed
-	
-Ambient objects craftable at an "Ancient Sundial"
+    or, projectile with X, Y and treeX[0] as gen seed
+    MEGA ACORN AW YEAH
+    
+Ambient objects craftable at an "Ancient Sundial"?
 https://terraria.gamepedia.com/Ambient_objects
 Change worldforge to use anvil noise :)
+
+Coding Done, needs sprites:
+autosloper
+worldforge
+tile/wall wand
+tree cycler
+wonderhammer
+
+Done:
+scaffold block/wall/platform
+
+bugs todo:
+check sloper in mp
+check living tree sync + fx (also mp)
+trunk doesn't shrink
 
 
 Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
