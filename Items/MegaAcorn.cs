@@ -22,8 +22,12 @@ namespace BuildPlanner.Items
         public override void AddRecipes()
         {
             ModRecipe r = new ModRecipe(mod);
+            r.alchemy = true;
             r.AddIngredient(ItemID.Acorn);
             r.AddIngredient(ItemID.PurificationPowder, 30);
+            r.AddIngredient(ItemID.Daybloom, 1);
+            r.AddIngredient(ItemID.Waterleaf, 1);
+            r.AddTile(TileID.Bottles);
             r.SetResult(item.type);
             r.AddRecipe();
         }

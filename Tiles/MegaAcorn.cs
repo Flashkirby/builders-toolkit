@@ -30,9 +30,11 @@ namespace BuildPlanner.Tiles
 
         public override bool CanPlace(int i, int j)
         {
+            // Only placeable on certain tiles, when fully solid (not sloped)
             for (int x = i; x <= i + 1; x++)
             {
                 if (!allowedTiles.Contains(Main.tile[x, j + 1].type)) return false;
+                if (!WorldGen.SolidTile(x, j + 1)) return false;
             }
             return true;
         }
