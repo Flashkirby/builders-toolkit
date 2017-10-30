@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BuildPlanner.Items
@@ -8,21 +9,23 @@ namespace BuildPlanner.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Living Acorn");
-            Tooltip.SetDefault("It might grow with a little help\n'Don't stand too close!'");
+            Tooltip.SetDefault("'It might grow with some assistance'");
         }
         public override void SetDefaults()
         {
-            item.useStyle = 1;
-            item.useTurn = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.autoReuse = true;
-            item.consumable = true;
-            item.width = 20;
-            item.height = 20;
+            item.CloneDefaults(ItemID.Acorn);
             item.createTile = mod.TileType(this.GetType().Name);
-            item.rare = 1;
-            item.value = Item.buyPrice(0, 5, 0, 0);
+            item.value = Item.buyPrice(0, 1, 0, 0);
+            item.width = 24;
+            item.height = 24;
+        }
+        public override void AddRecipes()
+        {
+            ModRecipe r = new ModRecipe(mod);
+            r.AddIngredient(ItemID.Acorn);
+            r.AddIngredient(ItemID.PurificationPowder, 30);
+            r.SetResult(item.type);
+            r.AddRecipe();
         }
     }
 }
