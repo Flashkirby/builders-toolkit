@@ -25,7 +25,8 @@ namespace BuildPlanner.Tiles
 
             allowedTiles = new List<ushort>(new ushort[] { TileID.Grass, TileID.SnowBlock, TileID.JungleGrass, TileID.HallowedGrass });
         }
-        public override void KillMultiTile(int i, int j, int frameX, int frameY) { Item.NewItem(i * 16, j * 16, 32, 16, mod.ItemType(this.GetType().Name)); }
+        internal static bool noItemDrop = false;
+        public override void KillMultiTile(int i, int j, int frameX, int frameY) { if (!noItemDrop) Item.NewItem(i * 16, j * 16, 32, 16, mod.ItemType(this.GetType().Name)); }
 
         public override bool CanPlace(int i, int j)
         {

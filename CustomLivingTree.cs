@@ -8,6 +8,7 @@ namespace BuildPlanner
 {
     public class CustomLivingTree
     {
+        private const bool DEBUG_GROW = false;
         private static ushort TileWoodTree = TileID.LivingWood;
         private static ushort TileLeafTree = TileID.LeafBlock;
         private static byte WallWoodTree = WallID.LivingWood;
@@ -44,14 +45,17 @@ namespace BuildPlanner
             TileVine = TileID.Vines;
             for (int i = 1; i <= 3; i++)
             {
-                if (Main.tile[tX, tY + i] == null) continue;
-                if (Main.tile[tX, tY + i].type == TileID.JungleGrass)
+                for (int j = 0; j <= 1; j++)
                 {
-                    TileWoodTree = TileID.LivingMahogany;
-                    TileLeafTree = TileID.LivingMahoganyLeaves;
-                    WallWoodTree = WallID.LivingWood;
-                    TileVine = TileID.JungleVines;
-                    break;
+                    if (Main.tile[tX + j, tY + i] == null) continue;
+                    if (Main.tile[tX + j, tY + i].type == TileID.JungleGrass)
+                    {
+                        TileWoodTree = TileID.LivingMahogany;
+                        TileLeafTree = TileID.LivingMahoganyLeaves;
+                        WallWoodTree = WallID.LivingWood;
+                        TileVine = TileID.JungleVines;
+                        break;
+                    }
                 }
             }
 
@@ -86,12 +90,13 @@ namespace BuildPlanner
 
             if (Main.netMode != 1)
             {
-                NetMessage.SendTileSquare(-1, tX, tY, 40, TileChangeType.None);
-                int syncUp = 20;
-                while (treeTop.Y < tY - 40)
+                int size = 40;
+                int syncUp = size;
+                NetMessage.SendTileSquare(-1, tX, tY, size, TileChangeType.None);
+                while (treeTop.Y < tY - syncUp)
                 {
-                    NetMessage.SendTileSquare(-1, tX, tY - syncUp, 40, TileChangeType.None);
-                    syncUp += 20;
+                    NetMessage.SendTileSquare(-1, tX, tY - syncUp, size, TileChangeType.None);
+                    syncUp += size;
                 }
             }
             return true;
@@ -325,9 +330,25 @@ namespace BuildPlanner
             }
             else { Main.tile[x, y] = new Tile(); }
 
-            WorldGen.KillTile(x, y, false, false, true);
-            WorldGen.PlaceTile(x, y, type, false, true, -1, style);
-            Main.tile[x, y].slope(0);
+            if (DEBUG_GROW)
+            {
+                if(type == TileLeafTree)
+                {
+                    Dust d = Dust.NewDustPerfect(new Point(x, y).ToWorldCoordinates(), DustID.Grass);
+                    d.noGravity = true; d.scale = 2f;
+                }
+                else
+                {
+                    Dust d = Dust.NewDustPerfect(new Point(x, y).ToWorldCoordinates(), DustID.t_LivingWood);
+                    d.noGravity = true; d.scale = 3f;
+                }
+            }
+            else
+            {
+                WorldGen.KillTile(x, y);
+                WorldGen.PlaceTile(x, y, type, false, true, -1, style);
+                Main.tile[x, y].slope(0);
+            }
             return true;
         }
         private static bool PlaceTreeBackground(int x, int y, byte type)
@@ -340,8 +361,12 @@ namespace BuildPlanner
             }
             else { Main.tile[x, y] = new Tile(); }
 
-            WorldGen.KillWall(x, y);
-            WorldGen.PlaceWall(x, y, type, false);
+            if (!DEBUG_GROW)
+            {
+                Main.tile[x, y].wall = 0;
+                Main.tile[x, y].wallColor(0);
+                WorldGen.PlaceWall(x, y, type, false);
+            }
             return true;
         }
     }
