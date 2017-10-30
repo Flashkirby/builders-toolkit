@@ -328,13 +328,24 @@ namespace BuildPlanner
                     if (type == TileLeafTree && t.type == TileLeafTree) return false;
 
                     if (t.type != TileID.Grass && t.type != TileID.Dirt &&
+                        t.type != TileID.ClayBlock && t.type != TileID.Stone &&
+                        t.type != TileID.Sand && t.type != TileLeafTree &&
+
                         t.type != TileID.SnowBlock && t.type != TileID.IceBlock &&
+                        t.type != TileID.Silt && t.type != TileID.IceBlock &&
+
                         t.type != TileID.JungleGrass && t.type != TileID.Mud &&
-                        t.type != TileID.Stone && t.type != TileLeafTree &&
+
+                        t.type != TileID.CorruptGrass && t.type != TileID.Ebonstone &&
+                        t.type != TileID.Ebonsand && t.type != TileID.CorruptIce &&
+                        t.type != TileID.FleshGrass && t.type != TileID.Crimstone &&
+                        t.type != TileID.Crimsand && t.type != TileID.FleshIce &&
+                        t.type != TileID.HallowedGrass && t.type != TileID.Pearlstone &&
+                        t.type != TileID.Pearlsand && t.type != TileID.HallowedIce &&
+
                         t.type != TileID.Copper && t.type != TileID.Tin &&
                         t.type != TileID.Iron && t.type != TileID.Lead &&
-                        t.type != TileID.Silver && t.type != TileID.Tungsten &&
-                        t.type != TileID.HallowedGrass) return false;
+                        t.type != TileID.Silver && t.type != TileID.Tungsten) return false;
                     if (t.type < Main.tileLavaDeath.Length && Main.tileLavaDeath[t.type]) return false;
                 }
             }
