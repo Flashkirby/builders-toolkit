@@ -15,7 +15,7 @@ namespace BuildPlanner.Tiles
             Main.tileFrameImportant[Type] = true;
             Main.tileLavaDeath[Type] = true;
             ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Living Sapling");
+            name.SetDefault("Giant Acorn");
             AddMapEntry(new Color(80, 70, 40), name);
             disableSmartCursor = true;
             dustType = DustID.t_LivingWood;
