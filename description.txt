@@ -13,19 +13,18 @@ The Architect
     
 Ambient objects craftable at an "Ancient Sundial"?
 https://terraria.gamepedia.com/Ambient_objects
-Change worldforge to use anvil noise :)
 
 Coding Done, needs sprites:
 autosloper
-worldforge
 tile/wall wand
 tree cycler
 wonderhammer
-Dryad's Watering Can (fire swirling green wave, grows saplings, uses purification powder)
+Dryad's Watering Can (fire green goodness, grows saplings, uses purification powder)
 
 Done:
 scaffold block/wall/platform
 mega acorn
+worldforge
 
 bugs todo:
 check sloper in mp
