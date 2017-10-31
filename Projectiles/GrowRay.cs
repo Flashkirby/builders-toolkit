@@ -80,17 +80,42 @@ namespace BuildPlanner.Projectiles
 
         public static bool GrowTile(Tile tile, int x, int y, System.Random rand)
         {
-            if (!GrowGrass(tile, x, y, rand))
+            GrowFlowerWall(tile, x, y);
+            if (!GrowHerbs(tile, x, y - 1))
             {
-                if (!GrowFlowers(tile, x, y))
+                if (!GrowGrass(tile, x, y, rand))
                 {
-                    if (!GrowTrees(tile, x, y))
+                    if (!GrowFlowers(tile, x, y))
                     {
-                        return false;
+                        if (!GrowTrees(tile, x, y))
+                        {
+                            return false;
+                        }
                     }
                 }
             }
             return true;
+        }
+        public static bool GrowFlowerWall(Tile tile, int x, int y)
+        {
+            if (tile.wall == WallID.DirtUnsafe || tile.wall == WallID.GrassUnsafe ||
+                (tile.wall >= WallID.DirtUnsafe1 && tile.wall <= WallID.DirtUnsafe4))
+            {
+                tile.wall = WallID.FlowerUnsafe;
+                if (Main.netMode == 2)
+                { NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None); }
+                return true;
+            }
+
+            if (tile.wall == WallID.MudUnsafe ||
+                (tile.wall >= WallID.JungleUnsafe1 && tile.wall <= WallID.JungleUnsafe4))
+            {
+                tile.wall = WallID.JungleUnsafe;
+                if (Main.netMode == 2)
+                { NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None); }
+                return true;
+            }
+            return false;
         }
         public static bool GrowGrass(Tile tile, int x, int y, System.Random rand)
         {
@@ -196,6 +221,7 @@ namespace BuildPlanner.Projectiles
                     while (tile.frameX == exclude * 18)
                     { tile.frameX = (short)(18 * Main.rand.Next(min, max)); }
 
+                    Main.PlaySound(SoundID.Item54, new Point(x, y).ToWorldCoordinates());
                     if (Main.netMode == 2)
                     { NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None); }
 
@@ -209,7 +235,23 @@ namespace BuildPlanner.Projectiles
             // Grow the tree (server auto sends netmessage and FX)
             if (TileLoader.IsSapling(Main.tile[x, y].type) && WorldGen.GrowTree(x, y))
             {
+                Main.PlaySound(SoundID.Item60, new Point(x, y).ToWorldCoordinates());
                 WorldGen.TreeGrowFXCheck(x, y);
+                return true;
+            }
+            return false;
+        }
+        public static bool GrowHerbs(Tile tile, int x, int y)
+        {
+            if (tile.type == 82)
+            {
+                tile.type = 83;
+                Main.PlaySound(SoundID.Grass, new Point(x, y).ToWorldCoordinates());
+                if (Main.netMode == 2)
+                {
+                    NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
+                }
+                WorldGen.SquareTileFrame(x, y, true);
                 return true;
             }
             return false;
@@ -218,7 +260,12 @@ namespace BuildPlanner.Projectiles
         public bool GrowModTree(Tile tile, int x, int y)
         {
             if (!WorldGen.SolidTile(x, y + 1) || tile.type != mod.TileType<Tiles.MegaAcorn>()) return false;
-            return CustomLivingTree.GrowLivingTree(x, y);
+            if( CustomLivingTree.GrowLivingTree(x, y))
+            {
+                Main.PlaySound(SoundID.Item81, new Point(x, y).ToWorldCoordinates());
+                return true;
+            }
+            return false;
         }
     }
 }
