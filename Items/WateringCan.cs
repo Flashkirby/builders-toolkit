@@ -6,51 +6,54 @@ using Terraria.ModLoader;
 
 namespace BuildPlanner.Items
 {
+    internal class PurificationPower : GlobalItem
+    {
+        internal static int powderAmmo = AmmoID.None;
+        public override void SetDefaults(Item item)
+        {
+            if (item.type == ItemID.PurificationPowder)
+            {
+                if (item.ammo == AmmoID.None)
+                { item.ammo = item.type; }
+                powderAmmo = item.ammo;
+            }
+        }
+    }
     public class WateringCan : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Speeds up tree growth");
+            DisplayName.SetDefault("Dryadic Watering Can");
+            Tooltip.SetDefault("Uses Purification Powder\nCauses plants to sprout");
         }
 
         public override void SetDefaults()
         {
             item.width = 22;
             item.height = 22;
-            //item.maxStack = 99;
-            item.rare = 1;
             item.tileBoost = 24;
             item.useAnimation = 15;
-            item.useTime = 10;
-            item.useStyle = 1;
-            item.UseSound = SoundID.Item81;
-            //item.consumable = true;
+            item.useTime = 14;
+            item.autoReuse = true;
+            item.useStyle = 5;
+            item.shoot = mod.ProjectileType<Projectiles.GrowRay>();
+            item.shootSpeed = 6f;
+            item.UseSound = SoundID.Item13;
+            item.useAmmo = PurificationPower.powderAmmo;
+
+            item.rare = 2;
+            item.value = Item.buyPrice(0, 15, 0, 0);
         }
 
-        public override bool CanUseItem(Player player)
+        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            return TileLoader.IsSapling(Main.tile[Player.tileTargetX, Player.tileTargetY].type) || Main.tile[Player.tileTargetX, Player.tileTargetY].type == mod.TileType("MegaAcorn");
+            Projectile.NewProjectile(position, new Vector2(speedX, speedY), item.shoot, 0, 0f, player.whoAmI, 0, Main.rand.Next(0, 65536));
+            return false;
         }
 
-        public override bool AltFunctionUse(Player player) { return true; }
-        // Note that this item does not work in Multiplayer, but serves as a learning tool for other things.
-        public override bool UseItem(Player player)
+        public override Vector2? HoldoutOffset()
         {
-            if (player.altFunctionUse > 0)
-            {
-                CustomLivingTree.GrowLivingTree(Player.tileTargetX, Player.tileTargetY);
-            }
-            else if (WorldGen.GrowTree(Player.tileTargetX, Player.tileTargetY))
-            {
-                WorldGen.TreeGrowFXCheck(Player.tileTargetX, Player.tileTargetY);
-            }
-            else
-            {
-                //item.stack++;
-            }
-            return true;
+            return new Vector2(-6, 6);
         }
-
-
     }
 }
