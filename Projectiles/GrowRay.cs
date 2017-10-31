@@ -217,7 +217,7 @@ namespace BuildPlanner.Projectiles
 
         public bool GrowModTree(Tile tile, int x, int y)
         {
-            if (tile.type != mod.TileType<Tiles.MegaAcorn>()) return false;
+            if (!WorldGen.SolidTile(x, y + 1) || tile.type != mod.TileType<Tiles.MegaAcorn>()) return false;
             return CustomLivingTree.GrowLivingTree(x, y);
         }
     }
