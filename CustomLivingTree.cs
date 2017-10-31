@@ -323,31 +323,21 @@ namespace BuildPlanner
                 Tile t = Main.tile[x, y];
                 if (WorldGen.SolidTile(x, y))
                 {
-                    // Leablocks can only be on empty air
+                    // Leaf blocks can only be on empty air
                     if (type == TileLeafTree && t.type == TileWoodTree) return false;
                     if (type == TileLeafTree && t.type == TileLeafTree) return false;
 
-					// TODO: consider changing to TileID.Sets.CanBeClearedDuringOreRunner
-                    if (t.type != TileID.Grass && t.type != TileID.Dirt &&
-                        t.type != TileID.ClayBlock && t.type != TileID.Stone &&
-                        t.type != TileID.Sand && t.type != TileLeafTree &&
-
-                        t.type != TileID.SnowBlock && t.type != TileID.IceBlock &&
-                        t.type != TileID.Silt && t.type != TileID.IceBlock &&
-
-                        t.type != TileID.JungleGrass && t.type != TileID.Mud &&
-
-                        t.type != TileID.CorruptGrass && t.type != TileID.Ebonstone &&
-                        t.type != TileID.Ebonsand && t.type != TileID.CorruptIce &&
-                        t.type != TileID.FleshGrass && t.type != TileID.Crimstone &&
-                        t.type != TileID.Crimsand && t.type != TileID.FleshIce &&
-                        t.type != TileID.HallowedGrass && t.type != TileID.Pearlstone &&
-                        t.type != TileID.Pearlsand && t.type != TileID.HallowedIce &&
-
+                    // If not in these lists, cannot be replaced
+                    if (!TileID.Sets.CanBeClearedDuringOreRunner[t.type] &&
+                        !TileID.Sets.Grass[t.type] &&
+                        t.type != TileLeafTree && t.type != TileID.Silt &&
+                        // Not a low value ore
                         t.type != TileID.Copper && t.type != TileID.Tin &&
                         t.type != TileID.Iron && t.type != TileID.Lead &&
-                        t.type != TileID.Silver && t.type != TileID.Tungsten) return false;
-                    if (t.type < Main.tileLavaDeath.Length && Main.tileLavaDeath[t.type]) return false;
+                        t.type != TileID.Silver && t.type != TileID.Tungsten &&
+                        // Not killable by lava
+                        (t.type < Main.tileLavaDeath.Length && !Main.tileLavaDeath[t.type])
+                        ) return false;
                 }
             }
             else { Main.tile[x, y] = new Tile(); }
