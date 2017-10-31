@@ -101,18 +101,22 @@ namespace BuildPlanner.Projectiles
             if (tile.wall == WallID.DirtUnsafe || tile.wall == WallID.GrassUnsafe ||
                 (tile.wall >= WallID.DirtUnsafe1 && tile.wall <= WallID.DirtUnsafe4))
             {
-                tile.wall = WallID.FlowerUnsafe;
-                if (Main.netMode == 2)
-                { NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None); }
+                if (Main.netMode != 1)
+                {
+                    tile.wall = WallID.FlowerUnsafe;
+                    NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
+                }
                 return true;
             }
 
             if (tile.wall == WallID.MudUnsafe ||
                 (tile.wall >= WallID.JungleUnsafe1 && tile.wall <= WallID.JungleUnsafe4))
             {
-                tile.wall = WallID.JungleUnsafe;
-                if (Main.netMode == 2)
-                { NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None); }
+                if (Main.netMode != 1)
+                {
+                    tile.wall = WallID.JungleUnsafe;
+                    NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
+                }
                 return true;
             }
             return false;
@@ -155,9 +159,11 @@ namespace BuildPlanner.Projectiles
 
                 if (replaceType >= 0)
                 {
-                    WorldGen.PlaceTile(x, y, replaceType, false, true);
-                    if (Main.netMode == 2)
-                    { NetMessage.SendData(17, -1, -1, null, 1, x, y, (float)replaceType, 0, 0, 0); }
+                    if (Main.netMode != 1)
+                    {
+                        WorldGen.PlaceTile(x, y, replaceType, false, true);
+                        NetMessage.SendData(17, -1, -1, null, 1, x, y, (float)replaceType, 0, 0, 0);
+                    }
                     return true;
                 }
             }
@@ -215,16 +221,16 @@ namespace BuildPlanner.Projectiles
 
                 if (min >= 0 && max > min)
                 {
-                    tile.active(true);
-                    tile.frameX = (short)(18 * Main.rand.Next(min, max));
-                    // Don't spawn mushrooms
-                    while (tile.frameX == exclude * 18)
-                    { tile.frameX = (short)(18 * Main.rand.Next(min, max)); }
-
                     Main.PlaySound(SoundID.Item54, new Point(x, y).ToWorldCoordinates());
-                    if (Main.netMode == 2)
-                    { NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None); }
-
+                    if (Main.netMode != 1)
+                    {
+                        tile.active(true);
+                        tile.frameX = (short)(18 * Main.rand.Next(min, max));
+                        // Don't spawn mushrooms
+                        while (tile.frameX == exclude * 18)
+                        { tile.frameX = (short)(18 * Main.rand.Next(min, max)); }
+                        NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
+                    }
                     return true;
                 }
             }
@@ -233,11 +239,14 @@ namespace BuildPlanner.Projectiles
         public static bool GrowTrees(Tile tile, int x, int y)
         {
             // Grow the tree (server auto sends netmessage and FX)
-            if (TileLoader.IsSapling(Main.tile[x, y].type) && WorldGen.GrowTree(x, y))
+            if (TileLoader.IsSapling(Main.tile[x, y].type))
             {
                 Main.PlaySound(SoundID.Item60, new Point(x, y).ToWorldCoordinates());
-                WorldGen.TreeGrowFXCheck(x, y);
-                return true;
+                if (Main.netMode != 1 && WorldGen.GrowTree(x, y))
+                {
+                    WorldGen.TreeGrowFXCheck(x, y);
+                    return true;
+                }
             }
             return false;
         }
@@ -245,13 +254,13 @@ namespace BuildPlanner.Projectiles
         {
             if (tile.type == 82)
             {
-                tile.type = 83;
                 Main.PlaySound(SoundID.Grass, new Point(x, y).ToWorldCoordinates());
-                if (Main.netMode == 2)
+                tile.type = 83;
+                if (Main.netMode != 1)
                 {
                     NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
+                    WorldGen.SquareTileFrame(x, y, true);
                 }
-                WorldGen.SquareTileFrame(x, y, true);
                 return true;
             }
             return false;

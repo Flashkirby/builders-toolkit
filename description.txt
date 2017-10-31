@@ -27,9 +27,10 @@ mega acorn
 worldforge
 
 bugs todo:
-check sloper in mp
 check living tree sync + fx (also mp)
+	-works but only sets gives default frame
 check watering can mp
+	-works except herbs
 
 
 Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/

@@ -97,14 +97,13 @@ namespace BuildPlanner
 
             if (Main.netMode != 1)
             {
-                int size = 40;
-                int syncUp = size;
-                NetMessage.SendTileSquare(-1, tX, tY, size, TileChangeType.None);
-                while (treeTop.Y < tY - syncUp)
-                {
-                    NetMessage.SendTileSquare(-1, tX, tY - syncUp, size, TileChangeType.None);
-                    syncUp += size;
-                }
+                int left, top, width, height;
+                left = tX - 25;
+                top = treeTop.Y - 25;
+                width = 50;
+                height = tY + 25 - top;
+
+                NetMessage.SendTileRange(-1, left, top, width, height, TileChangeType.None);
             }
             return true;
         }
