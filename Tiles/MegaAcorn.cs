@@ -19,14 +19,14 @@ namespace BuildPlanner.Tiles
             AddMapEntry(new Color(80, 70, 40), name);
             disableSmartCursor = true;
             dustType = DustID.t_LivingWood;
-            TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
+            TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.DrawYOffset = 2; //offset into ground
             TileObjectData.addTile(Type);
 
             allowedTiles = new List<ushort>(new ushort[] { TileID.Grass, TileID.SnowBlock, TileID.JungleGrass, TileID.HallowedGrass });
         }
         internal static bool noItemDrop = false;
-        public override void KillMultiTile(int i, int j, int frameX, int frameY) { if (!noItemDrop) Item.NewItem(i * 16, j * 16, 32, 16, mod.ItemType(this.GetType().Name)); }
+        public override void KillMultiTile(int i, int j, int frameX, int frameY) { if (!noItemDrop) Item.NewItem(i * 16, j * 16, 32, 32, mod.ItemType(this.GetType().Name)); }
 
         public override bool CanPlace(int i, int j)
         {
