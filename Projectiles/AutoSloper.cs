@@ -22,6 +22,7 @@ namespace BuildPlanner.Projectiles
             projectile.timeLeft = 6;
             projectile.tileCollide = false;
         }
+        public override bool? CanCutTiles() { return false; }
 
         public override void AI()
         {
