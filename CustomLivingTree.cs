@@ -327,6 +327,7 @@ namespace BuildPlanner
                     if (type == TileLeafTree && t.type == TileWoodTree) return false;
                     if (type == TileLeafTree && t.type == TileLeafTree) return false;
 
+					// TODO: consider changing to TileID.Sets.CanBeClearedDuringOreRunner
                     if (t.type != TileID.Grass && t.type != TileID.Dirt &&
                         t.type != TileID.ClayBlock && t.type != TileID.Stone &&
                         t.type != TileID.Sand && t.type != TileLeafTree &&
