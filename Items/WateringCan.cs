@@ -23,7 +23,7 @@ namespace BuildPlanner.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dryadic Watering Can");
+            DisplayName.SetDefault("Watering Can");
             Tooltip.SetDefault("Uses Purification Powder\nCauses plants to sprout");
         }
 
