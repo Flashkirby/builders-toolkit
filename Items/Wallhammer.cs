@@ -21,6 +21,7 @@ namespace BuildPlanner.Items
             item.noMelee = true;
             item.useStyle = 5;
             item.damage = 55;
+            item.autoReuse = true;
             item.useAnimation = 25;
             item.useTime = 25;
             item.width = 24;
