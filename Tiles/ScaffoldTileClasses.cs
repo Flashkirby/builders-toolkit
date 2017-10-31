@@ -14,8 +14,8 @@ namespace BuildPlanner.Tiles
             Main.tileBlockLight[Type] = false; // Doesn't block lights
             Main.tileLavaDeath[Type] = true; // Burrrrn
             Main.tileBrick[Type] = true; // Merges with other "brick" tiles aka most house tiles
+			Main.tileNoFail[Type] = true; // Can be broken basically instantly
             TileID.Sets.BreakableWhenPlacing[Type] = true; // Can place other tiles over this
-            mineResist = 0.01f; // Can be broken basically instantly
             dustType = 7; // Wood
             AddMapEntry(new Color(185, 122, 87)); // Sort of wood-ish colour
         }
@@ -29,11 +29,11 @@ namespace BuildPlanner.Tiles
             Main.tileSolid[Type] = true; // platforms are totally solid
             Main.tileSolidTop[Type] = true; // But only on top
             Main.tileNoAttach[Type] = true; // Doesn't "merge" with other block types
+			Main.tileNoFail[Type] = true; // Can be broken basically instantly
             Main.tileTable[Type] = true; // Can be used to place table things like candles
             Main.tileLavaDeath[Type] = true; // Also burrrrns
             TileID.Sets.Platforms[Type] = true;
             TileID.Sets.BreakableWhenPlacing[Type] = true; // Can place other tiles over this
-            mineResist = 0.01f; // Can be broken basically instantly
             dustType = 7; // Wood
             AddMapEntry(new Color(200, 150, 120)); // Sort of light wood-ish colour
             disableSmartCursor = true; // Smartcursor doesn't target platforms as a block
