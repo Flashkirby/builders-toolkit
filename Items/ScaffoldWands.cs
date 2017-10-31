@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 namespace BuildPlanner.Items
 {
     // TODO: sold by merchant when carrying scaffolding
+    // TODO: Consumes every frame with architect gizmo (itemtime + autoreuse interaction?)
     public class TileWand : ModItem
     {
         public override void SetStaticDefaults()
@@ -19,7 +20,7 @@ namespace BuildPlanner.Items
             item.consumable = false;
             item.maxStack = 1;
             item.useAnimation = 2;
-            item.useTime = 1;
+            item.useTime = 2;
             item.useStyle = 5;
             item.holdStyle = 3;
 
@@ -74,7 +75,7 @@ namespace BuildPlanner.Items
         public override void SetDefaults()
         {
             TileWand.WandDefaults(item);
-            item.useAnimation = 2;
+            item.useAnimation = 3;
 
             item.tileBoost = 12;
             item.tileWand = mod.ItemType<ScaffoldWall>();

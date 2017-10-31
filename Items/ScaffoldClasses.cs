@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace BuildPlanner.Items
 {
+    // TODO: Consumes every frame with architect gizmo (itemtime + autoreuse interaction?)
 	public class Scaffold : ModItem
     {
         public static void SetDefaultsBasic(Item item)
@@ -79,7 +80,7 @@ namespace BuildPlanner.Items
         public override void SetDefaults()
         {
             Scaffold.SetDefaultsBasic(item);
-            item.useTime = 1;
+            item.useTime = 2;
             item.createWall = mod.WallType(this.GetType().Name);
         }
 
@@ -89,6 +90,11 @@ namespace BuildPlanner.Items
             recipe.AddIngredient(mod.ItemType<Scaffold>(), 16);
             recipe.SetResult(this, 64);
             recipe.AddRecipe();
+        }
+
+        public override bool UseItem(Player player)
+        {
+            player.wallSpeed = 1f; return false;
         }
     }
 }
