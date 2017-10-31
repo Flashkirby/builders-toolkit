@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -74,8 +75,15 @@ namespace BuildPlanner
 
             // nothing
             if (target == null) return false;
-
-            player.itemTime = (int)(player.HeldItem.useTime / PlayerHooks.TotalUseTimeMultiplier(player, player.HeldItem)) / 2; // Place twice as fast
+			
+			// Place twice as fast
+			float newItemTime = (player.HeldItem.useTime / PlayerHooks.TotalUseTimeMultiplier(player, player.HeldItem)); 
+			if (mode == 1)
+			{ player.itemTime = (int)(newItemTime * (player.wallSpeed) * 0.5f); }
+			else
+			{ player.itemTime = (int)(newItemTime * (player.tileSpeed) * 0.5f); }
+			player.itemTime = Math.Max(1, player.itemTime);
+            
             Main.PlaySound(7, -1, -1, 1, 1f, 0f);
 
             int tileX = target.Value.X;
