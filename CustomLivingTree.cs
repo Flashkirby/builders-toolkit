@@ -23,17 +23,19 @@ namespace BuildPlanner
              */
             Random genRand = new Random(tX + tX + Main.treeX[0]);
 
-            //Height Limit
-            if (tY < 150) { Main.NewText("Tree cannot grow at this height. ", Color.ForestGreen); return false; }
+            // Height Limit
+            // Main.NewText("Tree cannot grow at this height. ", Color.ForestGreen);
+            if (tY < 150) { return false; }
 
             // Make sure the area above is clear
+            // Main.NewText("Tree needs unobstructed path to the sun. " + Main.tile[x, y].type, Color.ForestGreen); 
             for (int x = tX - 25; x <= tX + 25; x++)
             {
                 for (int y = 5; y < tY - 5; y++)
                 {
                     if (Main.tile[x, y].active() && Main.tileSolid[Main.tile[x, y].type])
                     {
-                        Main.NewText("Tree needs unobstructed path to the sun. " + Main.tile[x, y].type, Color.ForestGreen); return false;
+                        return false;
                     }
                 }
             }
