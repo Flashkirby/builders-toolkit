@@ -11,21 +11,23 @@ namespace BuildPlanner.Tiles
         public override void SetDefaults()
         {
             Main.tileSolid[Type] = true;
-            Main.tileBlockLight[Type] = false; // Doesn't block lights
+			Main.tileBlockLight[Type] = false; // Let light through
             Main.tileLavaDeath[Type] = true; // Burrrrn
             Main.tileBrick[Type] = true; // Merges with other "brick" tiles aka most house tiles
 			Main.tileNoFail[Type] = true; // Can be broken basically instantly
             TileID.Sets.BreakableWhenPlacing[Type] = true; // Can place other tiles over this
+			TileID.Sets.DrawsWalls[Type] = true; // Shows walls behind, aka see-through
             dustType = 7; // Wood
             AddMapEntry(new Color(185, 122, 87)); // Sort of wood-ish colour
         }
+		public override void PostSetDefaults()
+		{ Main.tileNoSunLight[Type] = false; } // Allows light through, stop background blacking out
     }
     public class ScaffoldPlatform : ModTile
     {
         public override void SetDefaults()
         {
             Main.tileFrameImportant[Type] = true; // is a platform
-            Main.tileBlockLight[Type] = false; // Doesn't block lights
             Main.tileSolid[Type] = true; // platforms are totally solid
             Main.tileSolidTop[Type] = true; // But only on top
             Main.tileNoAttach[Type] = true; // Doesn't "merge" with other block types
