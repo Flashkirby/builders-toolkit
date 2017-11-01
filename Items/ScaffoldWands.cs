@@ -3,15 +3,17 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+/// <summary>
+/// Sprites by San#1917
+/// </summary>
 namespace BuildPlanner.Items
 {
     // TODO: sold by merchant when carrying scaffolding
-    // TODO: Consumes every frame with architect gizmo (itemtime + autoreuse interaction?)
     public class TileWand : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Constructinator: Blocks");
+            DisplayName.SetDefault("Block Canvas");
             Tooltip.SetDefault("Places Scaffolding\n<right> to mine tiles");
         }
         public static void WandDefaults(Item item)
@@ -69,7 +71,7 @@ namespace BuildPlanner.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Constructinator: Walls");
+            DisplayName.SetDefault("Wall Canvas");
             Tooltip.SetDefault("Places Scaffolding\n<right> to remove housing\n");
         }
         public override void SetDefaults()

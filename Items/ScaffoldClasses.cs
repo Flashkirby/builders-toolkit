@@ -4,7 +4,6 @@ using Terraria.ModLoader;
 
 namespace BuildPlanner.Items
 {
-    // TODO: Consumes every frame with architect gizmo (itemtime + autoreuse interaction?)
 	public class Scaffold : ModItem
     {
         public static void SetDefaultsBasic(Item item)

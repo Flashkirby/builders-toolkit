@@ -10,9 +10,6 @@ The Architect
         Platform (horizontal + vertical line)
         Platform (horizontal + diagonal line)
         Wall (back fill square)
-    
-Ambient objects craftable at an "Ancient Sundial"?
-https://terraria.gamepedia.com/Ambient_objects
 
 Coding Done, needs sprites:
 autosloper
@@ -38,3 +35,4 @@ Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-co
 
 Credits:
 Flashkirby99 - I am making this mod.
+San - Canvas item sprites.
