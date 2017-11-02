@@ -10,18 +10,37 @@ The Architect
         Platform (horizontal + vertical line)
         Platform (horizontal + diagonal line)
         Wall (back fill square)
-
+# ArchitectUI
+	- draw circles hex (use multicolour wrench / wire kite UI)
+# ArchitectProjectile
+	fields: 
+		- list of tile coords
+		- bool active mod (Build/Destroy)
+		- byte active tool
+		-
+		
+	methods for: 
+		- Freeform line
+		- Try square line (+ player direction)
+		- Oval line
+		- Diagonal Trysquare (+ player direction)
+		- Box
+	
+	consume scaffolding
+		- block (1 in 1), platform (1 in 2), wall (1 in 4)
+Wrecking
+		
 Coding Done, needs sprites:
 autosloper
-tile/wall wand
 tree cycler
 wonderhammer
-Dryad's Watering Can (fire green goodness, grows saplings, uses purification powder)
+Watering Can
 
 Done:
 scaffold block/wall/platform
 mega acorn
 worldforge
+tile/wall wand
 
 bugs todo:
 check living tree sync + fx (also mp)
@@ -29,10 +48,12 @@ check living tree sync + fx (also mp)
 check watering can mp
 	-works except herbs
 
-
-Check this out https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
+also recommended: https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
+https://forums.terraria.org/index.php?threads/vipix-toolbox.61305/
+https://forums.terraria.org/index.php?threads/bulldozer.54110/
+https://forums.terraria.org/index.php?threads/utility-bombs.53608/
 	
 
 Credits:
 Flashkirby99 - I am making this mod.
-San - Canvas item sprites.
+San (O Barbaro Desenhista) - Canvas, Architect item sprites.
