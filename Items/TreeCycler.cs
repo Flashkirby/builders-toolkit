@@ -34,7 +34,7 @@ namespace BuildPlanner.Items
         {
             item.rare = 7;
             item.UseSound = SoundID.Item82;
-            item.useStyle = 5;
+            item.useStyle = 1;
             item.useTurn = true;
             item.useAnimation = 60;
             item.useTime = 60;
@@ -45,8 +45,10 @@ namespace BuildPlanner.Items
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (Main.netMode != 0)
-            { tooltips.Add(new TooltipLine(mod, "TooltipNoMP", "Cannot be used in Multiplayer")); }
+            if (Main.netMode != 0) { 
+				tooltips[0].overrideColor = Colors.RarityTrash; 
+				tooltips.Add(new TooltipLine(mod, "TooltipNoMP", "Cannot be used in Multiplayer")); 
+			}
         }
 
         public override bool CanUseItem(Player player)
