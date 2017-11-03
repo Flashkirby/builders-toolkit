@@ -19,6 +19,9 @@ namespace BuildPlanner.Items
             }
         }
     }
+    /// <summary>
+    /// Sprite by San#1917
+    /// </summary>
     public class WateringCan : ModItem
     {
         public override void SetStaticDefaults()
@@ -29,8 +32,8 @@ namespace BuildPlanner.Items
 
         public override void SetDefaults()
         {
-            item.width = 22;
-            item.height = 22;
+            item.width = 32;
+            item.height = 32;
             item.tileBoost = 24;
             item.useAnimation = 15;
             item.useTime = 14;
@@ -40,6 +43,7 @@ namespace BuildPlanner.Items
             item.shootSpeed = 6f;
             item.UseSound = SoundID.Item13;
             item.useAmmo = PurificationPower.powderAmmo;
+            item.scale = 0.85f;
 
             item.rare = 2;
             item.value = Item.buyPrice(0, 15, 0, 0);
