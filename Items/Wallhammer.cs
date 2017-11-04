@@ -23,7 +23,7 @@ namespace BuildPlanner.Items
             item.damage = 55;
             item.autoReuse = true;
             item.useAnimation = 25;
-            item.useTime = 25;
+            item.useTime = 24;
             item.width = 24;
             item.height = 28;
             item.shoot = mod.ProjectileType<Projectiles.Wallbeam>();
