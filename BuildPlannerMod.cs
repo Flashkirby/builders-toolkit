@@ -51,6 +51,10 @@ namespace BuildPlanner
         public override void Load()
         {
             Items.Architect.ID = ItemType<Items.Architect>();
+            Tiles.Scaffold.ID = TileType<Tiles.Scaffold>();
+            Tiles.ScaffoldPlatform.ID = TileType<Tiles.ScaffoldPlatform>();
+            Tiles.ScaffoldWall.ID = WallType<Tiles.ScaffoldWall>();
+
             if (Main.netMode != 2)
             {
                 ArchitectUI.LoadTextures(new Texture2D[] {

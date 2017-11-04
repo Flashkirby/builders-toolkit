@@ -13,6 +13,10 @@ namespace BuildPlanner.Projectiles
 {
     public class Architect : ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[projectile.type] = 2;
+        }
         public override void SetDefaults()
         {
             projectile.width = 10;
@@ -82,7 +86,7 @@ namespace BuildPlanner.Projectiles
             Tiles = ts.MakeSelection(player.direction != projectile.spriteDirection);
 
             if (player.channel) return;
-            PlaceTiles(StartTile, TargetTile, Tiles);
+            PlaceTiles(player, StartTile, TargetTile, Tiles);
             projectile.Kill();
         }
 
@@ -103,9 +107,8 @@ namespace BuildPlanner.Projectiles
             return p;
         }
 
-        private void PlaceTiles(Point StartTile, Point EndTile, List<Point> Tiles)
+        private void PlaceTiles(Player player, Point StartTile, Point EndTile, List<Point> Tiles)
         {
-
             Dust d = Dust.NewDustPerfect(StartTile.ToWorldCoordinates(), DustID.FlameBurst);
             d.fadeIn = 2f;
             d.velocity = default(Vector2);
@@ -115,21 +118,111 @@ namespace BuildPlanner.Projectiles
             d.velocity = default(Vector2);
             d.noGravity = true;
 
+            bool sendNetMessage =
+                (Main.netMode == 2 && projectile.owner == 255) ||
+                (Main.netMode == 1 && projectile.owner == Main.myPlayer);
+
+            if (UI.ArchitectUI.Settings.MineTiles)
+            {
+                if (UI.ArchitectUI.Settings.Mode == UI.ArchitectUI.Settings.ToolMode.WallFill)
+                {
+                    foreach (Point p in Tiles)
+                    {
+                        if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
+                        Tile t = Main.tile[p.X, p.Y];
+                        AttemptBreakWall(player, sendNetMessage, t, p.X, p.Y);
+                    }
+                }
+                else
+                {
+                    foreach (Point p in Tiles)
+                    {
+                        if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
+                        Tile t = Main.tile[p.X, p.Y];
+                        AttemptBreakTile(player, sendNetMessage, t, p.X, p.Y);
+                    }
+                }
+            }
+            else
+            {
+
+            }
+        }
+
+        private static void AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style)
+        {
+            bool placed = false;
+            placed = WorldGen.PlaceTile(x, y, Type, false, false, player.whoAmI, Style);
+            if (placed && sendNetMessage)
+            { NetMessage.SendData(17, -1, -1, null, 1, (float)x, (float)y, (float)Type, Style, 0, 0); }
+        }
+        private static void AttemptPlaceWall(Player player, bool sendNetMessage, Tile t, int x, int y, int Wall)
+        {
+            if ((int)t.wall != Wall)
+            {
+                WorldGen.PlaceWall(x, y, Wall, false);
+                if(sendNetMessage)
+                { NetMessage.SendData(17, -1, -1, null, 3, (float)x, (float)y, (float)Wall, 0, 0, 0); }
+            }
+        }
+        private static void AttemptBreakTile(Player player, bool sendNetMessage, Tile t, int x, int y)
+        {
+            int tileId = player.hitTile.HitObject(x, y, 1); // 1 for tiles, 2 for walls
+            bool failed = player.hitTile.AddDamage(tileId, 200, true) <= 100;
+            player.hitTile.Clear(tileId);
+
+            if (failed)
+            {
+                WorldGen.KillTile(x, y, true);
+                if (sendNetMessage)
+                {
+                    NetMessage.SendData(17, -1, -1, null, 0, (float)x, (float)y, 1f, 0, 0, 0);
+                }
+            }
+            else
+            {
+                WorldGen.KillTile(x, y, false);
+                if (sendNetMessage)
+                {
+                    NetMessage.SendData(17, -1, -1, null, 0, (float)x, (float)y, 0f, 0, 0, 0);
+                }
+            }
+        }
+        private static void AttemptBreakWall(Player player, bool sendNetMessage, Tile t, int x, int y)
+        {
+            int tileId = player.hitTile.HitObject(x, y, 2); // 1 for tiles, 2 for walls
+            bool failed = player.hitTile.AddDamage(tileId, 200, true) <= 100;
+            player.hitTile.Clear(tileId);
+
+            if (failed)
+            {
+                WorldGen.KillWall(x, y, true);
+                if (sendNetMessage)
+                {
+                    NetMessage.SendData(17, -1, -1, null, 2, (float)x, (float)y, 1f, 0, 0, 0);
+                }
+            }
+            else
+            {
+                WorldGen.KillWall(x, y, false);
+                if (sendNetMessage)
+                {
+                    NetMessage.SendData(17, -1, -1, null, 2, (float)x, (float)y, 0f, 0, 0, 0);
+                }
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (Tiles == null && Tiles.Count == 0) return false;
             Texture2D texture = Main.projectileTexture[projectile.type];
-
+            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, UI.ArchitectUI.Settings.MineTiles ? 1 : 0);
             foreach (Point point in Tiles)
             {
-                spriteBatch.Draw(texture, point.ToWorldCoordinates() - Main.screenPosition,
-                    new Rectangle(0, 0, texture.Width, texture.Height),
-                    new Color(1f, 1f, 1f, 0.5f), projectile.rotation, texture.Size() / 2,
+                spriteBatch.Draw(texture, point.ToWorldCoordinates() - Main.screenPosition, frame,
+                    new Color(1f, 1f, 1f, 0.5f), projectile.rotation, frame.Size() / 2,
                     projectile.scale, SpriteEffects.None, 0f);
             }
-
             return false;
         }
     }

@@ -8,6 +8,7 @@ namespace BuildPlanner.Tiles
 {
     public class Scaffold : ModTile
     {
+        internal static int ID;
         public override void SetDefaults()
         {
             Main.tileSolid[Type] = true;
@@ -25,6 +26,7 @@ namespace BuildPlanner.Tiles
     }
     public class ScaffoldPlatform : ModTile
     {
+        internal static int ID;
         public override void SetDefaults()
         {
             Main.tileFrameImportant[Type] = true; // is a platform
@@ -56,6 +58,7 @@ namespace BuildPlanner.Tiles
     }
     public class ScaffoldWall : ModWall
     {
+        internal static int ID;
         public override void SetDefaults()
         {
             Main.wallHouse[Type] = true; // housing wall can be destroyed anywhere
