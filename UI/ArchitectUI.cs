@@ -151,7 +151,8 @@ namespace BuildPlanner.UI
                 Main.LocalPlayer.showItemIcon ||
                 Main.LocalPlayer.mouseInterface || Main.LocalPlayer.lastMouseInterface ||
                 Main.LocalPlayer.controlUseItem ||
-                (Main.LocalPlayer.HeldItem.type != Items.Architect.ID)
+                (Main.LocalPlayer.HeldItem.type != Items.Architect.ID) ||
+                !visible
                 )
             { visible = false; }
             else
