@@ -126,7 +126,7 @@ namespace BuildPlanner.Projectiles
             {
                 spriteBatch.Draw(texture, point.ToWorldCoordinates() - Main.screenPosition,
                     new Rectangle(0, 0, texture.Width, texture.Height),
-                    new Color(0.5f, 0.5f, 0.5f, 0.5f), projectile.rotation, texture.Size() / 2,
+                    new Color(0.5f, 0.5f, 0.5f, 1f), projectile.rotation, texture.Size() / 2,
                     projectile.scale, SpriteEffects.None, 0f);
             }
 
@@ -168,66 +168,115 @@ namespace BuildPlanner.Projectiles
             }
             else if (selectStyle == 2)
             {
-                int left = Math.Min(startTile.X, endTile.X);
-                int top = Math.Min(startTile.Y, endTile.Y);
-                int width = (int)Math.Abs(diffX);
-                int height = (int)Math.Abs(diffY);
-                int rX = width / 2;
-                int rY = height / 2;
-                if (rX < 1 || rY < 1)
-                {
-                    selectFill = true;
-                    RulerStyle(alternate, list, diffX, diffY);
-                    return list;
-                }
-
-                double angQuart = Math.PI / 2;
-
-                int longSide = rX;
-                if (rY > rX)
-                { longSide = rY; }
-                longSide *= 2;
-
-                // Get the quarter arc
-                int listIndex = 0;
-                for (int l = 0; l <= longSide; l++)
-                {
-                    int x = (int)(left + 0.5 + rX * Math.Cos(l * angQuart / longSide));
-                    int y = (int)(top + 0.5 + rY * Math.Sin(l * angQuart / longSide));
-                    if (listIndex < 1 || (list[listIndex - 1].X != x || list[listIndex - 1].Y != y))
-                    {
-                        list.Add(new Point(x, y));
-                        listIndex++;
-                    }
-                }
-
-                // Move down and mirror horizontally
-                int popX = width % 2 == 0 ? 0 : 1;
-                int popY = height % 2 == 0 ? 0 : 1;
-                int origLen = list.Count;
-                for (int i = 0; i < listIndex; i++)
-                {
-                    int lx = left * 2 + rX - list[i].X;
-                    int ly = list[i].Y + rY + popY;
-                    list[i] = new Point(list[i].X + rX + popX, ly);
-                    if (popX == 0 && lx == left + rX) continue; // stop overlap where ends meet
-                    list.Add(new Point(lx, ly));
-                }
-                // Mirror vertical
-                origLen = list.Count;
-                for (int i = 0; i < origLen; i++)
-                {
-                    int ly = (top + rY) * 2 - list[i].Y + popY;
-                    if (popY == 0 && ly == top + rY) continue; // stop overlap where ends meet
-                    int lx = list[i].X;
-                    list.Add(new Point(lx, ly));
-                }
+                EllipseStyle(list, diffX, diffY);
             }
             else if (selectStyle == 3)
             {
-
+                StairStyle(alternate, list, diffX, diffY);
             }
             return list;
+        }
+
+        private void StairStyle(bool alternate, List<Point> list, float diffX, float diffY)
+        {
+            if (alternate) { RulerStyle(false, list, diffX, diffY); return; }
+
+            int dirX = Math.Sign(diffX);
+            int dirY = Math.Sign(diffY);
+            int w = (int)Math.Abs(diffX);
+            int h = (int)Math.Abs(diffY);
+            int shortest = h;
+
+            Point endPoint;
+            if(w >= h)
+            {
+                for (int i = 0; i < w - shortest; i++)
+                {
+                    list.Add(new Point(
+                        startTile.X + i * dirX,
+                        startTile.Y
+                        ));
+                }
+                endPoint = new Point(startTile.X + (w - shortest) * dirX, startTile.Y);
+            }
+            else
+            {
+                shortest = w;
+                for (int i = 0; i < h - shortest; i++)
+                {
+                    list.Add(new Point(
+                        startTile.X,
+                        startTile.Y + i * dirY
+                        ));
+                }
+                endPoint = new Point(startTile.X, startTile.Y + (h - shortest) * dirY);
+            }
+
+            for(int i = 0; i <= shortest; i++)
+            {
+                list.Add(new Point(
+                    endPoint.X + i * dirX,
+                    endPoint.Y + i * dirY
+                    ));
+            }
+        }
+
+        private void EllipseStyle(List<Point> list, float diffX, float diffY)
+        {
+            int left = Math.Min(startTile.X, endTile.X);
+            int top = Math.Min(startTile.Y, endTile.Y);
+            int width = (int)Math.Abs(diffX);
+            int height = (int)Math.Abs(diffY);
+            int rX = width / 2;
+            int rY = height / 2;
+            if (rX < 1 || rY < 1)
+            {
+                selectFill = true;
+                RulerStyle(false, list, diffX, diffY);
+                return;
+            }
+
+            double angQuart = Math.PI / 2;
+
+            int longSide = rX;
+            if (rY > rX)
+            { longSide = rY; }
+            longSide *= 2;
+
+            // Get the quarter arc
+            int listIndex = 0;
+            for (int l = 0; l <= longSide; l++)
+            {
+                int x = (int)(left + 0.5 + rX * Math.Cos(l * angQuart / longSide));
+                int y = (int)(top + 0.5 + rY * Math.Sin(l * angQuart / longSide));
+                if (listIndex < 1 || (list[listIndex - 1].X != x || list[listIndex - 1].Y != y))
+                {
+                    list.Add(new Point(x, y));
+                    listIndex++;
+                }
+            }
+
+            // Move down and mirror horizontally
+            int popX = width % 2 == 0 ? 0 : 1;
+            int popY = height % 2 == 0 ? 0 : 1;
+            int origLen = list.Count;
+            for (int i = 0; i < listIndex; i++)
+            {
+                int lx = left * 2 + rX - list[i].X;
+                int ly = list[i].Y + rY + popY;
+                list[i] = new Point(list[i].X + rX + popX, ly);
+                if (popX == 0 && lx == left + rX) continue; // stop overlap where ends meet
+                list.Add(new Point(lx, ly));
+            }
+            // Mirror vertical
+            origLen = list.Count;
+            for (int i = 0; i < origLen; i++)
+            {
+                int ly = (top + rY) * 2 - list[i].Y + popY;
+                if (popY == 0 && ly == top + rY) continue; // stop overlap where ends meet
+                int lx = list[i].X;
+                list.Add(new Point(lx, ly));
+            }
         }
 
         private void RulerStyle(bool alternate, List<Point> list, float diffX, float diffY)
