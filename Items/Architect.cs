@@ -21,9 +21,27 @@ namespace BuildPlanner.Items
             item.height = 24;
             item.rare = 8;
             item.shoot = mod.ProjectileType<Projectiles.Architect>();
-            item.value = Item.buyPrice(0, 25, 0, 0);
+            item.createTile = mod.GetItem<Scaffold>().item.createTile;
+            item.value = Item.buyPrice(0, 15, 0, 0);
         }
-        public override void UpdateInventory(Player player) { player.rulerLine = true; }
+        public override void UpdateInventory(Player player)
+        {
+            player.rulerLine = true;
+            player.rulerGrid = true;
+        }
+
+        public override void AddRecipes()
+        {
+            ModRecipe r = new ModRecipe(mod);
+            r.AddIngredient(ItemID.LaserDrill);
+            r.AddIngredient(mod.ItemType<TileWand>());
+            r.AddIngredient(mod.ItemType<WallWand>());
+            r.AddIngredient(ItemID.Ruler);
+            r.AddIngredient(ItemID.LaserRuler);
+            r.AddTile(TileID.TinkerersWorkbench);
+            r.SetResult(item.type);
+            r.AddRecipe();
+        }
 
         public override bool AltFunctionUse(Player player)
         {
@@ -32,6 +50,8 @@ namespace BuildPlanner.Items
             { BuildPlanner.architectUI.ToggleVisibility(); }
             return false;
         }
+
+        public override bool ConsumeAmmo(Player player) { return false; }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
