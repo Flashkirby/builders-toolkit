@@ -318,6 +318,20 @@ namespace BuildPlanner.Projectiles
 
         private static void AttemptBreakTile(Player player, bool sendNetMessage, Tile t, int x, int y)
         {
+
+            if (TileID.Sets.CanBeClearedDuringOreRunner[t.type] ||
+                TileID.Sets.Grass[t.type] ||
+                TileID.Sets.Stone[t.type] ||
+                TileID.Sets.Snow[t.type] ||
+                TileID.Sets.IcesSlush[t.type] ||
+                TileID.Sets.Ore[t.type])
+            {   // If it natural, cannot break
+                return;
+            }
+            else if (!Main.tileBrick[t.type] && !TileID.Sets.Platforms[t.type] &&
+                Main.tileLargeFrames[t.type] == 0 && !Main.tileFrameImportant[t.type])
+            { return; } // If neither: a brick, a large brick, a platform
+
             int tileId = player.hitTile.HitObject(x, y, 1); // 1 for tiles, 2 for walls
             bool failed = player.hitTile.AddDamage(tileId, 200, true) <= 100;
             player.hitTile.Clear(tileId);
@@ -341,6 +355,8 @@ namespace BuildPlanner.Projectiles
         }
         private static void AttemptBreakWall(Player player, bool sendNetMessage, Tile t, int x, int y)
         {
+            if (!Main.wallHouse[t.wall]) return;
+
             int tileId = player.hitTile.HitObject(x, y, 2); // 1 for tiles, 2 for walls
             bool failed = player.hitTile.AddDamage(tileId, 200, true) <= 100;
             player.hitTile.Clear(tileId);
