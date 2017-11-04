@@ -163,6 +163,7 @@ namespace BuildPlanner.Projectiles
                         else
                         { secondPoint = -1; }
 
+                        bool netUpdated = false;
                         foreach (Point p in SelectedTiles)
                         {
                             if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
@@ -177,11 +178,14 @@ namespace BuildPlanner.Projectiles
                                 if (secondPoint >= 0)
                                 {
                                     secondPoint--;
-                                    if(t.halfBrick()) //unflatten
+                                    if (t.halfBrick()) //unflatten
                                     {
                                         WorldGen.PoundTile(p.X, p.Y);
                                         if (sendNetMessage)
-                                        { NetMessage.SendData(17, -1, -1, null, 7, (float)p.X, (float)p.Y, 1f, 0, 0, 0); }
+                                        {
+                                            NetMessage.SendData(17, -1, -1, null, 7,
+                                              (float)p.X, (float)p.Y, 1f);
+                                        }
                                     }
                                 }
                                 else
@@ -189,13 +193,20 @@ namespace BuildPlanner.Projectiles
                                     // apply slope
                                     WorldGen.SlopeTile(p.X, p.Y, slopeDir);
                                     if (sendNetMessage)
-                                    { NetMessage.SendData(17, -1, -1, null, 14, (float)p.X, (float)p.Y, 0f, 0, 0, 0); }
+                                    {
+                                        NetMessage.SendData(17, -1, -1, null, 14,
+                                          (float)p.X, (float)p.Y, slopeDir);
+                                    }
 
                                     if (slopeDir != 0 || t.halfBrick()) continue;
+
                                     // flatten
                                     WorldGen.PoundTile(p.X, p.Y);
                                     if (sendNetMessage)
-                                    { NetMessage.SendData(17, -1, -1, null, 7, (float)p.X, (float)p.Y, 1f, 0, 0, 0); }
+                                    {
+                                        NetMessage.SendData(17, -1, -1, null, 7,
+                                          (float)p.X, (float)p.Y, 1f);
+                                    }
                                 }
                             }
                         }
@@ -262,6 +273,7 @@ namespace BuildPlanner.Projectiles
             d.noGravity = true;
         }
 
+
         private static bool AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style, bool replaceChestBottom = false)
         {
             bool placed = false;
@@ -301,6 +313,9 @@ namespace BuildPlanner.Projectiles
 
             // TODO: paint if possible
         }
+
+        // Tile placement and destruction is limited to housing, platform and bricks
+
         private static void AttemptBreakTile(Player player, bool sendNetMessage, Tile t, int x, int y)
         {
             int tileId = player.hitTile.HitObject(x, y, 1); // 1 for tiles, 2 for walls
@@ -350,7 +365,8 @@ namespace BuildPlanner.Projectiles
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (SelectedTiles == null && SelectedTiles.Count == 0) return false;
+            if (SelectedTiles == null || SelectedTiles.Count == 0) return false;
+
             Texture2D texture = Main.projectileTexture[projectile.type];
             Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, UI.ArchitectUI.Settings.MineTiles ? 1 : 0);
             foreach (Point point in SelectedTiles)
