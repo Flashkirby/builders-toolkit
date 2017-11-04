@@ -126,7 +126,7 @@ namespace BuildPlanner.Projectiles
             {
                 spriteBatch.Draw(texture, point.ToWorldCoordinates() - Main.screenPosition,
                     new Rectangle(0, 0, texture.Width, texture.Height),
-                    new Color(0.5f, 0.5f, 0.5f, 1f), projectile.rotation, texture.Size() / 2,
+                    new Color(1f, 1f, 1f, 0.5f), projectile.rotation, texture.Size() / 2,
                     projectile.scale, SpriteEffects.None, 0f);
             }
 
