@@ -31,7 +31,7 @@ namespace BuildPlanner.Projectiles
 
         public Point TargetTile
         { get { return new Point((int)projectile.ai[0], (int)projectile.ai[1]); } }
-        public List<Point> Tiles;
+        public List<Point> SelectedTiles;
         public override void AI()
         {
             if (projectile.velocity.X != 0)
@@ -83,10 +83,10 @@ namespace BuildPlanner.Projectiles
                     ts.SetFillOn();
                     break;
             }
-            Tiles = ts.MakeSelection(player.direction != projectile.spriteDirection);
+            SelectedTiles = ts.MakeSelection(player.direction != projectile.spriteDirection);
 
             if (player.channel) return;
-            PlaceTiles(player, StartTile, TargetTile, Tiles);
+            PlaceTiles(player, StartTile, TargetTile, SelectedTiles);
             projectile.Kill();
         }
 
@@ -107,16 +107,8 @@ namespace BuildPlanner.Projectiles
             return p;
         }
 
-        private void PlaceTiles(Player player, Point StartTile, Point EndTile, List<Point> Tiles)
+        private void PlaceTiles(Player player, Point StartTile, Point EndTile, List<Point> SelectedTiles)
         {
-            Dust d = Dust.NewDustPerfect(StartTile.ToWorldCoordinates(), DustID.FlameBurst);
-            d.fadeIn = 2f;
-            d.velocity = default(Vector2);
-            d.noGravity = true;
-            d = Dust.NewDustPerfect(TargetTile.ToWorldCoordinates(), DustID.FlameBurst);
-            d.fadeIn = 2f;
-            d.velocity = default(Vector2);
-            d.noGravity = true;
 
             bool sendNetMessage =
                 (Main.netMode == 2 && projectile.owner == 255) ||
@@ -126,33 +118,94 @@ namespace BuildPlanner.Projectiles
             {
                 if (UI.ArchitectUI.Settings.Mode == UI.ArchitectUI.Settings.ToolMode.WallFill)
                 {
-                    foreach (Point p in Tiles)
+                    foreach (Point p in SelectedTiles)
                     {
                         if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
                         Tile t = Main.tile[p.X, p.Y];
                         AttemptBreakWall(player, sendNetMessage, t, p.X, p.Y);
+
+                        DropDustAtTile(p);
                     }
                 }
                 else
                 {
-                    foreach (Point p in Tiles)
+                    foreach (Point p in SelectedTiles)
                     {
                         if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
                         Tile t = Main.tile[p.X, p.Y];
                         AttemptBreakTile(player, sendNetMessage, t, p.X, p.Y);
+
+                        DropDustAtTile(p);
                     }
                 }
             }
             else
             {
-
+                switch (UI.ArchitectUI.Settings.Mode)
+                {
+                    case UI.ArchitectUI.Settings.ToolMode.PlatformLine:
+                        foreach (Point p in SelectedTiles)
+                        {
+                            if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
+                            Tile t = Main.tile[p.X, p.Y];
+                            AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y,
+                                Tiles.ScaffoldPlatform.ID, 0, false);
+                        }
+                        break;
+                    case UI.ArchitectUI.Settings.ToolMode.PlatformStairs:
+                        break;
+                    case UI.ArchitectUI.Settings.ToolMode.WallFill:
+                        foreach (Point p in SelectedTiles)
+                        {
+                            if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
+                            Tile t = Main.tile[p.X, p.Y];
+                            AttemptPlaceWall(player, sendNetMessage, t, p.X, p.Y,
+                                Tiles.ScaffoldWall.ID);
+                        }
+                        break;
+                    default:
+                        foreach (Point p in SelectedTiles)
+                        {
+                            if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
+                            Tile t = Main.tile[p.X, p.Y];
+                            AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y,
+                                Tiles.Scaffold.ID, 0, true);
+                        }
+                        break;
+                }
             }
         }
 
-        private static void AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style)
+        private void DropDustAtTile(Point p)
+        {
+            Dust d = Dust.NewDustPerfect(p.ToWorldCoordinates(), 175);
+            d.fadeIn = 3f;
+            d.velocity = default(Vector2);
+            d.noGravity = true;
+        }
+
+        private static void AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style, bool replaceChestBottom = false)
         {
             bool placed = false;
-            placed = WorldGen.PlaceTile(x, y, Type, false, false, player.whoAmI, Style);
+
+            if(replaceChestBottom)
+            {
+                // Chests are annoying, let's fix that.
+                if (Main.tile[x, y - 1] == null) Main.tile[x, y - 1] = new Tile();
+                if (TileID.Sets.BasicChest[Main.tile[x, y - 1].type] && t.type != Type)
+                {
+                    placed = WorldGen.PlaceTile(x, y, Type, false, true, player.whoAmI, Style);
+                }
+                else
+                {
+                    placed = WorldGen.PlaceTile(x, y, Type, false, false, player.whoAmI, Style);
+                }
+            }
+            else
+            {
+                placed = WorldGen.PlaceTile(x, y, Type, false, false, player.whoAmI, Style);
+            }
+
             if (placed && sendNetMessage)
             { NetMessage.SendData(17, -1, -1, null, 1, (float)x, (float)y, (float)Type, Style, 0, 0); }
         }
@@ -214,10 +267,10 @@ namespace BuildPlanner.Projectiles
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (Tiles == null && Tiles.Count == 0) return false;
+            if (SelectedTiles == null && SelectedTiles.Count == 0) return false;
             Texture2D texture = Main.projectileTexture[projectile.type];
             Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, UI.ArchitectUI.Settings.MineTiles ? 1 : 0);
-            foreach (Point point in Tiles)
+            foreach (Point point in SelectedTiles)
             {
                 spriteBatch.Draw(texture, point.ToWorldCoordinates() - Main.screenPosition, frame,
                     new Color(1f, 1f, 1f, 0.5f), projectile.rotation, frame.Size() / 2,
