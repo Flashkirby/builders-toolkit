@@ -210,16 +210,16 @@ namespace BuildPlanner.Projectiles
                     int lx = left * 2 + rX - list[i].X;
                     int ly = list[i].Y + rY + popY;
                     list[i] = new Point(list[i].X + rX + popX, ly);
-                    if (popX == 0 && i == origLen - 1) continue; // stop overlap where ends meet
+                    if (popX == 0 && lx == left + rX) continue; // stop overlap where ends meet
                     list.Add(new Point(lx, ly));
                 }
                 // Mirror vertical
                 origLen = list.Count;
                 for (int i = 0; i < origLen; i++)
                 {
-                    if (popY == 0 && (i == 0 || i == (origLen + 1) / 2)) continue; // stop overlap where ends meet
-                    int lx = list[i].X;
                     int ly = (top + rY) * 2 - list[i].Y + popY;
+                    if (popY == 0 && ly == top + rY) continue; // stop overlap where ends meet
+                    int lx = list[i].X;
                     list.Add(new Point(lx, ly));
                 }
             }
