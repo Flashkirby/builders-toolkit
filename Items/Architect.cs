@@ -23,6 +23,7 @@ namespace BuildPlanner.Items
             item.shoot = mod.ProjectileType<Projectiles.Architect>();
             item.value = Item.buyPrice(0, 25, 0, 0);
         }
+        public override void UpdateInventory(Player player) { player.rulerLine = true; }
 
         public override bool AltFunctionUse(Player player)
         {
