@@ -83,10 +83,12 @@ namespace BuildPlanner.Projectiles
                     ts.SetFillOn();
                     break;
             }
-            SelectedTiles = ts.MakeSelection(player.direction != projectile.spriteDirection);
+            bool alt = player.direction != projectile.spriteDirection;
+            SelectedTiles = ts.MakeSelection(alt);
+            int secondPoint = ts.SecondPoint;
 
             if (player.channel) return;
-            PlaceTiles(player, StartTile, TargetTile, SelectedTiles);
+            PlaceTiles(player, StartTile, TargetTile, SelectedTiles, alt, secondPoint);
             projectile.Kill();
         }
 
@@ -107,7 +109,7 @@ namespace BuildPlanner.Projectiles
             return p;
         }
 
-        private void PlaceTiles(Player player, Point StartTile, Point EndTile, List<Point> SelectedTiles)
+        private void PlaceTiles(Player player, Point StartTile, Point EndTile, List<Point> SelectedTiles, bool alternate, int secondPoint)
         {
 
             bool sendNetMessage =
@@ -153,6 +155,52 @@ namespace BuildPlanner.Projectiles
                         }
                         break;
                     case UI.ArchitectUI.Settings.ToolMode.PlatformStairs:
+                        #region Stair/Half checking
+
+                        int slopeDir = 0; // Auto-half
+                        if (!alternate) // Auto-stairs
+                        { slopeDir = CalculateStairSloping(StartTile, EndTile, SelectedTiles, ref secondPoint); }
+                        else
+                        { secondPoint = -1; }
+
+                        foreach (Point p in SelectedTiles)
+                        {
+                            if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
+                            Tile t = Main.tile[p.X, p.Y];
+
+                            // Place a tile
+                            if (AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y,
+                                Tiles.ScaffoldPlatform.ID, 0, false)
+                                ||
+                                TileID.Sets.Platforms[t.type])
+                            {
+                                if (secondPoint >= 0)
+                                {
+                                    secondPoint--;
+                                    if(t.halfBrick()) //unflatten
+                                    {
+                                        WorldGen.PoundTile(p.X, p.Y);
+                                        if (sendNetMessage)
+                                        { NetMessage.SendData(17, -1, -1, null, 7, (float)p.X, (float)p.Y, 1f, 0, 0, 0); }
+                                    }
+                                }
+                                else
+                                {
+                                    // apply slope
+                                    WorldGen.SlopeTile(p.X, p.Y, slopeDir);
+                                    if (sendNetMessage)
+                                    { NetMessage.SendData(17, -1, -1, null, 14, (float)p.X, (float)p.Y, 0f, 0, 0, 0); }
+
+                                    if (slopeDir != 0 || t.halfBrick()) continue;
+                                    // flatten
+                                    WorldGen.PoundTile(p.X, p.Y);
+                                    if (sendNetMessage)
+                                    { NetMessage.SendData(17, -1, -1, null, 7, (float)p.X, (float)p.Y, 1f, 0, 0, 0); }
+                                }
+                            }
+                        }
+
+                        #endregion
                         break;
                     case UI.ArchitectUI.Settings.ToolMode.WallFill:
                         foreach (Point p in SelectedTiles)
@@ -176,6 +224,36 @@ namespace BuildPlanner.Projectiles
             }
         }
 
+        private static int CalculateStairSloping(Point StartTile, Point EndTile, List<Point> SelectedTiles, ref int secondPoint)
+        {
+            int slopeDir = 1; // bottomleft->topright
+                              // other X XOR other Y
+            if (StartTile.X > EndTile.X ^ StartTile.Y > EndTile.Y)
+            {
+                slopeDir = 2;
+            }
+            if (secondPoint == 0)
+            {
+                secondPoint--;
+                if (SelectedTiles.Count == 1)
+                {
+                    slopeDir = 2;
+                    int startX = SelectedTiles[0].X;
+                    int startY = SelectedTiles[0].Y;
+                    if (
+                        (!WorldGen.TileEmpty(startX - 1, startY - 1) &&
+                        TileID.Sets.Platforms[Main.tile[startX - 1, startY - 1].type]) ||
+                        (!WorldGen.TileEmpty(startX + 1, startY + 1) &&
+                        TileID.Sets.Platforms[Main.tile[startX - 1, startY - 1].type]))
+                    {
+                        slopeDir = 1;
+                    }
+                }
+            }
+            else if (StartTile.Y < EndTile.Y) secondPoint--;
+            return slopeDir;
+        }
+
         private void DropDustAtTile(Point p)
         {
             Dust d = Dust.NewDustPerfect(p.ToWorldCoordinates(), 175);
@@ -184,7 +262,7 @@ namespace BuildPlanner.Projectiles
             d.noGravity = true;
         }
 
-        private static void AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style, bool replaceChestBottom = false)
+        private static bool AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style, bool replaceChestBottom = false)
         {
             bool placed = false;
 
@@ -208,6 +286,9 @@ namespace BuildPlanner.Projectiles
 
             if (placed && sendNetMessage)
             { NetMessage.SendData(17, -1, -1, null, 1, (float)x, (float)y, (float)Type, Style, 0, 0); }
+
+            // TODO: paint if possible
+            return placed;
         }
         private static void AttemptPlaceWall(Player player, bool sendNetMessage, Tile t, int x, int y, int Wall)
         {
@@ -217,6 +298,8 @@ namespace BuildPlanner.Projectiles
                 if(sendNetMessage)
                 { NetMessage.SendData(17, -1, -1, null, 3, (float)x, (float)y, (float)Wall, 0, 0, 0); }
             }
+
+            // TODO: paint if possible
         }
         private static void AttemptBreakTile(Player player, bool sendNetMessage, Tile t, int x, int y)
         {
@@ -286,6 +369,7 @@ namespace BuildPlanner.Projectiles
         private Point endTile;
         private byte selectStyle;
         private bool selectFill;
+        private int secondPoint;
 
         public TileSelection(Point startTile, Point endTile)
         {
@@ -298,12 +382,14 @@ namespace BuildPlanner.Projectiles
         public void SetSelectRulerDiag() { selectStyle = 3; }
         public void SetFillOn() { selectFill = true; }
         public void SetFillOff() { selectFill = false; }
+        public int SecondPoint { get { return secondPoint; } }
 
         public List<Point> MakeSelection(bool alternate)
         {
             List<Point> list = new List<Point>();
             float diffX = endTile.X - startTile.X;
             float diffY = endTile.Y - startTile.Y;
+            secondPoint = 0;
             if (selectStyle == 0)
             {
                 LineStyle(list, diffX, diffY);
@@ -342,6 +428,7 @@ namespace BuildPlanner.Projectiles
                         startTile.X + i * dirX,
                         startTile.Y
                         ));
+                    secondPoint++;
                 }
                 endPoint = new Point(startTile.X + (w - shortest) * dirX, startTile.Y);
             }
@@ -354,6 +441,7 @@ namespace BuildPlanner.Projectiles
                         startTile.X,
                         startTile.Y + i * dirY
                         ));
+                    secondPoint++;
                 }
                 endPoint = new Point(startTile.X, startTile.Y + (h - shortest) * dirY);
             }
@@ -445,6 +533,7 @@ namespace BuildPlanner.Projectiles
                 for (int x = 0; x <= Math.Abs(diffX); x++)
                 {
                     list.Add(new Point(startTile.X + x * dirX, startTile.Y));
+                    secondPoint++;
                 }
                 for (int y = 1; y <= Math.Abs(diffY); y++)
                 {
@@ -456,6 +545,7 @@ namespace BuildPlanner.Projectiles
                 for (int y = 0; y <= Math.Abs(diffY); y++)
                 {
                     list.Add(new Point(startTile.X, startTile.Y + y * dirY));
+                    secondPoint++;
                 }
                 for (int x = 1; x <= Math.Abs(diffX); x++)
                 {
