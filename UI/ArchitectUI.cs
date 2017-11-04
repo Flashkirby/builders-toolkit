@@ -18,7 +18,7 @@ namespace BuildPlanner.UI
         {
             public static bool MineTiles = false;
             public enum ToolMode { TileLine, TileSquare, TileEllipse, PlatformLine, PlatformStairs, WallFill }
-            public static ToolMode Mode = ToolMode.TileLine;
+            public static ToolMode Mode = ToolMode.TileSquare;
         }
         #region Textures
         internal static void LoadTextures(Texture2D[] textures)
