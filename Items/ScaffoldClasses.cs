@@ -28,6 +28,9 @@ namespace BuildPlanner.Items
         {
             Scaffold.SetDefaultsBasic(item);
             item.createTile = mod.TileType(this.GetType().Name);
+
+            item.ammo = item.type;
+            item.notAmmo = true;
         }
 
 		public override void AddRecipes()

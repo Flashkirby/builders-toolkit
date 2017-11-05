@@ -95,8 +95,7 @@ namespace BuildPlanner.Projectiles
             PlaceTiles(player, StartTile, TargetTile, SelectedTiles, alt, secondPoint);
             projectile.Kill();
         }
-
-
+        
         private Player MaintainChannel()
         {
             Player p = Main.player[projectile.owner];
@@ -310,8 +309,8 @@ namespace BuildPlanner.Projectiles
                     NetMessage.SendData(17, -1, -1, null, 1, (float)x, (float)y, (float)Type, Style, 0, 0);
                 }
             }
-
-            // TODO: paint if possible
+            
+            AutoSprayPaint(player, x, y, false, sendNetMessage);
 
             return placed;
         }
@@ -326,9 +325,9 @@ namespace BuildPlanner.Projectiles
                 if (sendNetMessage)
                 { NetMessage.SendData(17, -1, -1, null, 3, (float)x, (float)y, (float)Wall, 0, 0, 0); }
             }
-
-            // TODO: paint if possible
             
+            AutoSprayPaint(player, x, y, true, sendNetMessage);
+
             return true;
         }
 
@@ -427,6 +426,44 @@ namespace BuildPlanner.Projectiles
                 }
             }
             return false;
+        }
+
+
+        private static void AutoSprayPaint(Player player, int x, int y, bool wall, bool broadcast)
+        {
+            if (player.autoPaint && player.builderAccStatus[3] == 0)
+            {
+                int paintColour = -1;
+                Item paintItem = null;
+                foreach (Item item in player.inventory)
+                {
+                    if (item.paint > 0 && item.stack > 0)
+                    {
+                        paintItem = item;
+                        paintColour = (int)paintItem.paint;
+                        break;
+                    }
+                }
+
+
+                if (paintColour > 0 && (int)Main.tile[x, y].color() != paintColour)
+                {
+                    bool appliedPaint = false;
+                    if (!wall)
+                    { appliedPaint = WorldGen.paintTile(x, y, (byte)paintColour, broadcast); }
+                    else
+                    { appliedPaint = WorldGen.paintWall(x, y, (byte)paintColour, broadcast); }
+
+                    if (appliedPaint)
+                    {
+                        paintItem.stack--;
+                        if (paintItem.stack <= 0)
+                        {
+                            paintItem.TurnToAir();
+                        }
+                    }
+                }
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
