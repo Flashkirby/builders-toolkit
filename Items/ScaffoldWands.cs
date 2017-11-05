@@ -26,7 +26,7 @@ namespace BuildPlanner.Items
             item.useStyle = 5;
             item.holdStyle = 3;
 
-            item.value = Item.sellPrice(0, 1, 0, 0);
+            item.value = Item.sellPrice(0, 10, 0, 0);
             item.rare = 2;
             item.autoReuse = true;
         }
