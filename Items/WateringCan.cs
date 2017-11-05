@@ -34,7 +34,6 @@ namespace BuildPlanner.Items
         {
             item.width = 32;
             item.height = 32;
-            item.tileBoost = 24;
             item.useAnimation = 15;
             item.useTime = 14;
             item.autoReuse = true;
