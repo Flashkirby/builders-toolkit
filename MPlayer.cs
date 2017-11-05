@@ -156,7 +156,15 @@ namespace BuildPlanner
                     Tile t = Main.tile[tileX, tileY];
 
                     // Filter by painted tiles
-                    if (t.color() != paintColour) { continue; }
+                    if(mode == 1)
+                    {
+                        if (t.wallColor() != paintColour) { continue; }
+                    }
+                    else
+                    {
+                        if (t.color() != paintColour) { continue; }
+                    }
+                    
 
                     // Filter scaffolding
                     if (mode == 0 && t.type != mod.TileType<Tiles.Scaffold>()) continue;
