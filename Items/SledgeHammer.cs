@@ -15,7 +15,7 @@ namespace BuildPlanner.Items
             item.damage = 27;
             item.useAnimation = 25;
             item.hammer = 0;
-            item.scale = 1.2f;
+            item.scale = 1.3f;
             item.rare = 2;
         }
     }
