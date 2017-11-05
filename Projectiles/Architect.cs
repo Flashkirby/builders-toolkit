@@ -318,7 +318,7 @@ namespace BuildPlanner.Projectiles
         {
             if (!HasAmmo(player, ItemAmmo)) return false;
 
-            if ((int)t.wall != Wall)
+            if ((int)t.wall == WallID.None)
             {
                 WorldGen.PlaceWall(x, y, Wall, false);
                 ConsumeAmmo(player, ItemAmmo, ConsumeChance);
