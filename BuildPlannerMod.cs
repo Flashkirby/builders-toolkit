@@ -50,10 +50,12 @@ namespace BuildPlanner
         internal static ArchitectUI architectUI;
         public override void Load()
         {
-            Items.Architect.ID = ItemType<Items.Architect>();
             Tiles.Scaffold.ID = TileType<Tiles.Scaffold>();
             Tiles.ScaffoldPlatform.ID = TileType<Tiles.ScaffoldPlatform>();
             Tiles.ScaffoldWall.ID = WallType<Tiles.ScaffoldWall>();
+
+            Items.Architect.ID = ItemType<Items.Architect>();
+            Items.Architect.UseAmmoID = ItemType<Items.Scaffold>();
 
             if (Main.netMode != 2)
             {

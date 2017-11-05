@@ -8,10 +8,11 @@ namespace BuildPlanner.Items
     public class Architect : ModItem
     {
         internal static int ID;
+        internal static int UseAmmoID;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("The Architect");
-            Tooltip.SetDefault("Allows ultimate control over scaffolding!\n" +
+            Tooltip.SetDefault("Allows ultimate control over Scaffolding Blocks!\n" +
                 "Right Click while holding to edit placement settings");
         }
         public override void SetDefaults()
@@ -21,7 +22,7 @@ namespace BuildPlanner.Items
             item.height = 24;
             item.rare = 8;
             item.shoot = mod.ProjectileType<Projectiles.Architect>();
-            item.createTile = mod.GetItem<Scaffold>().item.createTile;
+            item.useAmmo = mod.ItemType<Scaffold>();
             item.value = Item.buyPrice(0, 15, 0, 0);
         }
         public override void UpdateInventory(Player player)
@@ -43,6 +44,14 @@ namespace BuildPlanner.Items
             r.AddRecipe();
         }
 
+        public override bool CanUseItem(Player player)
+        {
+            if(UI.ArchitectUI.Settings.MineTiles)
+            { item.useAmmo = AmmoID.None; }
+            else
+            { item.useAmmo = UseAmmoID; }
+            return true;
+        }
         public override bool AltFunctionUse(Player player)
         {
             // Only on initial right click
@@ -50,7 +59,7 @@ namespace BuildPlanner.Items
             { BuildPlanner.architectUI.ToggleVisibility(); }
             return false;
         }
-
+        
         public override bool ConsumeAmmo(Player player) { return false; }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

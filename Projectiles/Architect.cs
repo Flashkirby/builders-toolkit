@@ -13,6 +13,8 @@ namespace BuildPlanner.Projectiles
 {
     public class Architect : ModProjectile
     {
+        private int ammoType = 0;
+
         public override void SetStaticDefaults()
         {
             Main.projFrames[projectile.type] = 2;
@@ -26,6 +28,8 @@ namespace BuildPlanner.Projectiles
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
+            
+            ammoType = mod.GetItem<Items.Scaffold>().item.ammo;
         }
         public override bool? CanCutTiles() { return false; }
 
@@ -150,8 +154,8 @@ namespace BuildPlanner.Projectiles
                         {
                             if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
                             Tile t = Main.tile[p.X, p.Y];
-                            AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y,
-                                Tiles.ScaffoldPlatform.ID, 0, false);
+                            AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y, Tiles.ScaffoldPlatform.ID, 0,
+                                ammoType, 2, false);
                         }
                         break;
                     case UI.ArchitectUI.Settings.ToolMode.PlatformStairs:
@@ -170,8 +174,8 @@ namespace BuildPlanner.Projectiles
                             Tile t = Main.tile[p.X, p.Y];
 
                             // Place a tile
-                            if (AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y,
-                                Tiles.ScaffoldPlatform.ID, 0, false)
+                            if (AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y, Tiles.ScaffoldPlatform.ID, 0,
+                                ammoType, 2, false)
                                 ||
                                 TileID.Sets.Platforms[t.type])
                             {
@@ -218,8 +222,8 @@ namespace BuildPlanner.Projectiles
                         {
                             if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
                             Tile t = Main.tile[p.X, p.Y];
-                            AttemptPlaceWall(player, sendNetMessage, t, p.X, p.Y,
-                                Tiles.ScaffoldWall.ID);
+                            AttemptPlaceWall(player, sendNetMessage, t, p.X, p.Y, Tiles.ScaffoldWall.ID,
+                                ammoType, 4);
                         }
                         break;
                     default:
@@ -227,8 +231,8 @@ namespace BuildPlanner.Projectiles
                         {
                             if (Main.tile[p.X, p.Y] == null) Main.tile[p.X, p.Y] = new Tile();
                             Tile t = Main.tile[p.X, p.Y];
-                            AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y,
-                                Tiles.Scaffold.ID, 0, true);
+                            AttemptPlaceTile(player, sendNetMessage, t, p.X, p.Y, Tiles.Scaffold.ID, 0,
+                                ammoType, 1, true);
                         }
                         break;
                 }
@@ -274,11 +278,13 @@ namespace BuildPlanner.Projectiles
         }
 
 
-        private static bool AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style, bool replaceChestBottom = false)
+        private static bool AttemptPlaceTile(Player player, bool sendNetMessage, Tile t, int x, int y, int Type, int Style, int ItemAmmo, int ConsumeChance, bool replaceChestBottom = false)
         {
             bool placed = false;
 
-            if(replaceChestBottom)
+            if (!HasAmmo(player, ItemAmmo)) return false;
+
+            if (replaceChestBottom)
             {
                 // Chests are annoying, let's fix that.
                 if (Main.tile[x, y - 1] == null) Main.tile[x, y - 1] = new Tile();
@@ -296,22 +302,34 @@ namespace BuildPlanner.Projectiles
                 placed = WorldGen.PlaceTile(x, y, Type, false, false, player.whoAmI, Style);
             }
 
-            if (placed && sendNetMessage)
-            { NetMessage.SendData(17, -1, -1, null, 1, (float)x, (float)y, (float)Type, Style, 0, 0); }
+            if (placed)
+            {
+                ConsumeAmmo(player, ItemAmmo, ConsumeChance);
+                if (sendNetMessage)
+                {
+                    NetMessage.SendData(17, -1, -1, null, 1, (float)x, (float)y, (float)Type, Style, 0, 0);
+                }
+            }
 
             // TODO: paint if possible
+
             return placed;
         }
-        private static void AttemptPlaceWall(Player player, bool sendNetMessage, Tile t, int x, int y, int Wall)
+        private static bool AttemptPlaceWall(Player player, bool sendNetMessage, Tile t, int x, int y, int Wall, int ItemAmmo, int ConsumeChance)
         {
+            if (!HasAmmo(player, ItemAmmo)) return false;
+
             if ((int)t.wall != Wall)
             {
                 WorldGen.PlaceWall(x, y, Wall, false);
-                if(sendNetMessage)
+                ConsumeAmmo(player, ItemAmmo, ConsumeChance);
+                if (sendNetMessage)
                 { NetMessage.SendData(17, -1, -1, null, 3, (float)x, (float)y, (float)Wall, 0, 0, 0); }
             }
 
             // TODO: paint if possible
+            
+            return true;
         }
 
         // Tile placement and destruction is limited to housing, platform and bricks
@@ -377,6 +395,38 @@ namespace BuildPlanner.Projectiles
                     NetMessage.SendData(17, -1, -1, null, 2, (float)x, (float)y, 0f, 0, 0, 0);
                 }
             }
+        }
+        
+        private static bool HasAmmo(Player player, int ItemAmmo)
+        {
+            foreach (Item item in player.inventory)
+            {
+                if (item.ammo == ItemAmmo && item.stack > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private static bool ConsumeAmmo(Player player, int ItemAmmo, int ConsumeChance)
+        {
+            foreach (Item item in player.inventory)
+            {
+                if (item.ammo == ItemAmmo && item.stack > 0)
+                {
+                    if (Main.rand.Next(ConsumeChance) == 0)
+                    {
+                        item.stack--;
+                        if (item.stack <= 0)
+                        {
+                            item.active = false;
+                            item.TurnToAir();
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
