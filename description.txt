@@ -1,59 +1,35 @@
-Tools to make builds, large and small, less painful.
+Tools to help plan builds. Want to design a house, but haven't the materials yet? Build a basic frame using scaffolding and replace it later. 
 
-List:
-The Architect 
-    Mode (Add/remove)
-    Draw Type
-        Tile (line - ruler)
-        Tile (square - Try Square)
-        Tile (circle - Compass)
-        Platform (horizontal + vertical line)
-        Platform (horizontal + diagonal line)
-        Wall (back fill square)
-# ArchitectUI
-	- draw circles hex (use multicolour wrench / wire kite UI)
-# ArchitectProjectile
-	fields: 
-		- list of tile coords
-		- bool active mod (Build/Destroy)
-		- byte active tool
-		-
-		
-	methods for: 
-		- Freeform line
-		- Try square line (+ player direction)
-		- Oval line
-		- Diagonal Trysquare (+ player direction)
-		- Box
-	
-	consume scaffolding
-		- block (1 in 1), platform (1 in 2), wall (1 in 4)
-Wrecking
-		
-Coding Done, needs sprites:
-autosloper
-tree cycler
-wonderhammer
-Watering Can
-
-Done:
-scaffold block/wall/platform
-mega acorn
-worldforge
-tile/wall wand
-
-bugs todo:
-check living tree sync + fx (also mp)
-	-works but only sets gives default frame
-check watering can mp
-	-works except herbs
-
-also recommended: https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
-https://forums.terraria.org/index.php?threads/vipix-toolbox.61305/
-https://forums.terraria.org/index.php?threads/bulldozer.54110/
-https://forums.terraria.org/index.php?threads/utility-bombs.53608/
-	
+Contents:
+* Scaffolding - Places faster than normal tiles, and can be directly replaced later. Crafted at a workbench. 
+* Sledgehammer - Tears down scaffolding by swinging. Sold by the Demolitionist.
+* Watering Can - Causes plants to grow, from grass to herbs to saplings. Sold by the Dryad.
+* Giant Acorn - Need a living tree? Plant one of these and water it. Crafted using alchemy.
+* Block/Wall Canvas - Scaffolding tools that increase placement range and mining for scaffolding blocks. Sold by the Goblin Tinkerer. 
+* Resonance Roller - Automatically slopes or un-slopes tiles in a square. Sold by the Steampunker.
+* Wonderhammer - Tool for destroying walls very quickly, if not very efficiently. Crafted from Hallowed Bars in Hardmode.
+* Topiary Terraformer - Used for cycling tree types in Forest, Snow and Jungle biomes. Singleplayer Only. Sold by the Dryad after defeating Plantera.
+* The Architect - Like the grand design, but for scaffolding. Face left or right for alternate placement styles. Crafted from a Laser Drill and other components.
+* Furious Worldforge - Acts like an extractinator, but instead sends tiles to replace nearby scaffolding of matching paint colours. Crafted with Luminite Bars.
 
 Credits:
 Flashkirby99 - I am making this mod.
-San (O Barbaro Desenhista) - Canvas, Architect item sprites.
+San (O Barbaro Desenhista) - Canvas, Watering Can, The Architect item sprites. Mod icon foreground.
+Fury - Giving the mod his blessings.
+Discord Regulars - General help, discussion and support. Thanks guys!
+
+ ===
+
+Other Building Mods:
+Luiafk - Drill mount on steroids, prefab buildings, powerful painting tools, etc.
+https://forums.terraria.org/index.php?threads/luiafk-unlimited-combinable-potions-autobuilding-stuff-and-more.58806/
+
+Vipix' Toolbox - Streamline and fine control for building, lots of interesting tools.
+https://forums.terraria.org/index.php?threads/vipix-toolbox.61305/
+
+Bulldozer - Completely flatten areas through superior industrial machinery.
+https://forums.terraria.org/index.php?threads/bulldozer.54110/
+
+Utility Bombs - Bombs that explode into useful things, like water.
+https://forums.terraria.org/index.php?threads/utility-bombs.53608/
+	
