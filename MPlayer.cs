@@ -99,24 +99,33 @@ namespace BuildPlanner
             if (item.createTile >= 0)
             {
                 byte slope = Main.tile[tileX, tileY].slope();
+                bool half = Main.tile[tileX, tileY].halfBrick();
 
                 WorldGen.PlaceTile(tileX, tileY, item.createTile, false, true, player.whoAmI, item.placeStyle);
+                WorldGen.paintTile(tileX, tileY, 0, true);
+                if (Main.netMode == 1)
+                { NetMessage.SendData(17, -1, -1, null, 1, tileX, tileY, (float)item.createTile, item.placeStyle); }
+
                 WorldGen.SlopeTile(tileX, tileY, slope);
                 if (Main.netMode == 1)
+                { NetMessage.SendData(17, -1, -1, null, 14, tileX, tileY, 0f); }
+
+                if(half)
                 {
-                    NetMessage.SendData(17, -1, -1, null, 1, tileX, tileY, (float)item.createTile, item.placeStyle, 0, 0);
-                    NetMessage.SendData(17, -1, -1, null, 14, tileX, tileY, 0f, 0, 0, 0);
+                    WorldGen.PoundTile(tileX, tileY);
+                    if (Main.netMode == 1)
+                    { NetMessage.SendData(17, -1, -1, null, 7, tileX, tileY, 1f); }
                 }
             }
             else
             {
                 Main.tile[tileX,tileY].wall = 0;
-                Main.tile[tileX, tileY].wallColor(0);
                 WorldGen.PlaceWall(tileX, tileY, item.createWall, false);
+                WorldGen.paintWall(tileX, tileY, 0, true);
                 WallLoader.PlaceInWorld(tileX, tileY, item);
                 if (Main.netMode == 1)
                 {
-                    NetMessage.SendData(17, -1, -1, null, 3, tileX, tileY, (float)item.createWall, 0, 0, 0);
+                    NetMessage.SendData(17, -1, -1, null, 3, tileX, tileY, (float)item.createWall);
                 }
             }
 
