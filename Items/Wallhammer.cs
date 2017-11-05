@@ -37,8 +37,10 @@ namespace BuildPlanner.Items
         public override void AddRecipes()
         {
             ModRecipe r = new ModRecipe(mod);
-            r.AddIngredient(ItemID.LaserDrill);
-            r.AddIngredient(ItemID.LunarBar, 6);
+            r.AddIngredient(ItemID.HallowedBar, 12);
+            r.AddIngredient(ItemID.SoulofFright, 10);
+            r.AddIngredient(ItemID.SoulofMight, 10);
+            r.AddTile(TileID.MythrilAnvil);
             r.SetResult(item.type);
             r.AddRecipe();
         }

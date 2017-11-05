@@ -22,5 +22,18 @@ namespace BuildPlanner.Items
             item.rare = 9;
 
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe r = new ModRecipe(mod);
+            r.AddIngredient(ItemID.LunarBar, 5);
+            r.AddIngredient(ItemID.FragmentSolar, 5);
+            r.AddIngredient(ItemID.FragmentVortex, 5);
+            r.AddIngredient(ItemID.FragmentNebula, 5);
+            r.AddIngredient(ItemID.FragmentStardust, 5);
+            r.AddTile(TileID.LunarCraftingStation);
+            r.SetResult(item.type);
+            r.AddRecipe();
+        }
     }
 }

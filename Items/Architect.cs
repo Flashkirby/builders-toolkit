@@ -44,7 +44,6 @@ namespace BuildPlanner.Items
             ModRecipe r = new ModRecipe(mod);
             r.AddIngredient(ItemID.LaserDrill);
             r.AddIngredient(mod.ItemType<TileWand>());
-            r.AddIngredient(mod.ItemType<WallWand>());
             r.AddIngredient(ItemID.Ruler);
             r.AddIngredient(ItemID.LaserRuler);
             r.AddTile(TileID.TinkerersWorkbench);
