@@ -47,22 +47,33 @@ namespace BuildPlanner.Tiles
             player.noThrow = 2;
             player.showItemIcon = true;
             player.showItemIcon2 = player.HeldItem.type;
-			
-			for (int num = 0; num < 8; num++)
-			{
-				try {
-				int tileRange = 64 + player.blockRange * 8;
-					Point randomTile = new Point(i + Main.rand.Next(-tileRange, tileRange + 1), j + Main.rand.Next(-tileRange, tileRange + 1));
-					Tile t = Main.tile[randomTile.X, randomTile.Y];
-					if (t.type == mod.TileType<Tiles.Scaffold>() ||
-						t.type == mod.TileType<Tiles.ScaffoldPlatform>() ||
-						t.wall == mod.WallType<Tiles.ScaffoldWall>()) {
-							Dust d = Dust.NewDustPerfect(randomTile.ToWorldCoordinates(), 170, default(Vector2), 0, default(Color), 0.5f);
-							d.noGravity = true;
-							d.fadeIn = 1f;
-					}
-				} catch {}
-			}
+
+            for (int num = 0; num < 16; num++)
+            {
+                try
+                {
+                    int tileRange = 64 + player.blockRange * 8;
+                    Point randomTile = new Point(i + Main.rand.Next(-tileRange, tileRange + 1), j + Main.rand.Next(-tileRange, tileRange + 1));
+                    Tile t = Main.tile[randomTile.X, randomTile.Y];
+
+                    // Check matching tile and paint colour
+                    bool match = (t.type == mod.TileType<Tiles.Scaffold>() ||
+                        t.type == mod.TileType<Tiles.ScaffoldPlatform>()) &&
+                        Main.tile[i, j].color() == t.color();
+                    if (!match)
+                    {
+                        match = t.wall == mod.WallType<Tiles.ScaffoldWall>() && Main.tile[i, j].color() == t.wallColor();
+                    }
+
+                    if (match)
+                    {
+                        Dust d = Dust.NewDustPerfect(randomTile.ToWorldCoordinates(), 170, default(Vector2), 0, default(Color), 0.5f);
+                        d.noGravity = true;
+                        d.fadeIn = 1f;
+                    }
+                }
+                catch { }
+            }
         }
 
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
