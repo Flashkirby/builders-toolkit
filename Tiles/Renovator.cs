@@ -18,7 +18,9 @@ namespace BuildPlanner.Tiles
             AddMapEntry(new Color(0, 80, 255), name);
             animationFrameHeight = 54;
 			TileID.Sets.HasOutlines[Type] = true;
-            //disableSmartCursor = true;
+            disableSmartCursor = true;
+
+            adjTiles = new int[] { TileID.WorkBenches, TileID.AdamantiteForge, TileID.Sawmill, TileID.HeavyWorkBench };
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3); // A 3x3 tile
             TileObjectData.newTile.DrawYOffset = 2; //offset into ground
