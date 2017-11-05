@@ -11,10 +11,12 @@ namespace BuildPlanner
     public class MPlayer : ModPlayer
     {
         public static int ScaffoldType = -1;
+        public static int PlatformType = -1;
 
         public override void OnEnterWorld(Player player)
         {
             ScaffoldType = mod.GetTile<Tiles.Scaffold>().Type;
+            PlatformType = mod.GetTile<Tiles.ScaffoldPlatform>().Type;
             TreeCycler.localForestCooldown = 0;
             TreeCycler.localSnowCooldown = 0;
             TreeCycler.localJungleCooldown = 0;
@@ -29,8 +31,11 @@ namespace BuildPlanner
             if (TreeCycler.localJungleCooldown > 0) TreeCycler.localJungleCooldown--;
 
             // Demolition Hammer removes scaffolding super ez
-            if (ScaffoldType > 0 && player.HeldItem.type == ItemID.Rockfish)
-            { Main.tileCut[ScaffoldType] = true; }
+            if (ScaffoldType > 0 && player.HeldItem.type == mod.ItemType<Items.SledgeHammer>())
+            {
+                Main.tileCut[ScaffoldType] = true;
+                Main.tileCut[PlatformType] = true;
+            }
             
             // Renovator
             if ((player.HeldItem.createTile >= 0 || player.HeldItem.createWall >= 0) &&
@@ -54,7 +59,10 @@ namespace BuildPlanner
             if (player.whoAmI != Main.myPlayer) return;
 
             if (ScaffoldType > 0 && Main.tileCut[ScaffoldType])
-            { Main.tileCut[ScaffoldType] = false; }
+            {
+                Main.tileCut[ScaffoldType] = false;
+                Main.tileCut[PlatformType] = false;
+            }
         }
 
         /// <summary> Maing logic for using the renovator. </summary>
