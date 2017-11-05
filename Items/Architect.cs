@@ -31,6 +31,14 @@ namespace BuildPlanner.Items
             player.rulerGrid = true;
         }
 
+        public override void HoldItem(Player player)
+        {
+            if (UI.ArchitectUI.Settings.MineTiles)
+            { item.useAmmo = AmmoID.None; }
+            else
+            { item.useAmmo = UseAmmoID; }
+        }
+
         public override void AddRecipes()
         {
             ModRecipe r = new ModRecipe(mod);
@@ -43,15 +51,7 @@ namespace BuildPlanner.Items
             r.SetResult(item.type);
             r.AddRecipe();
         }
-
-        public override bool CanUseItem(Player player)
-        {
-            if(UI.ArchitectUI.Settings.MineTiles)
-            { item.useAmmo = AmmoID.None; }
-            else
-            { item.useAmmo = UseAmmoID; }
-            return true;
-        }
+        
         public override bool AltFunctionUse(Player player)
         {
             // Only on initial right click
