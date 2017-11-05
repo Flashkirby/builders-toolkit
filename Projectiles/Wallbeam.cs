@@ -58,7 +58,7 @@ namespace BuildPlanner.Projectiles
                 float num809 = projectile.velocity.ToRotation() + ((Main.rand.Next(2) == 1) ? -1f : 1f) * 1.57079637f;
                 float num810 = (float)Main.rand.NextDouble() * 2f + 2f;
                 Vector2 vector79 = new Vector2((float)Math.Cos((double)num809) * num810, (float)Math.Sin((double)num809) * num810);
-                int num811 = Dust.NewDust(endPoint, 0, 0, 229, vector79.X, vector79.Y, 0, default(Color), 1f);
+                int num811 = Dust.NewDust(endPoint, 0, 0, 182, vector79.X, vector79.Y, 0, default(Color), 1f);
                 Main.dust[num811].noGravity = true;
                 Main.dust[num811].scale = 1.7f;
             }
@@ -171,8 +171,8 @@ namespace BuildPlanner.Projectiles
                 return false;
             }
             Texture2D texture2D19 = Main.projectileTexture[projectile.type];
-            Texture2D texture2D20 = Main.extraTexture[21];
-            Texture2D texture2D21 = Main.extraTexture[22];
+            Texture2D texture2D20 = mod.GetTexture("Projectiles/Wallbeam_Beam");
+            Texture2D texture2D21 = mod.GetTexture("Projectiles/Wallbeam_End");
             float num228 = LaserLength;
             Color color44 = new Microsoft.Xna.Framework.Color(255, 255, 255, 0) * 0.9f;
             Texture2D arg_AF99_1 = texture2D19;
