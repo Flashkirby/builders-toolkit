@@ -73,25 +73,20 @@ namespace BuildPlanner
 
             Point? target = null;
             byte mode = 255;
-            if (item.createTile >= 0)
-            {
-                if (Main.tileSolid[item.createTile] && !Main.tileSolidTop[item.createTile]) mode = 0;
-                if (TileID.Sets.Platforms[item.createTile]) mode = 2;
-            }
-            else if (item.createWall >= 0) mode = 1;
+            mode = RenovatorUseItemMode(item, mode);
             target = FindTileTarget(mode, paintColour);
 
             // nothing
             if (target == null) return false;
-			
-			// Place twice as fast
-			float newItemTime = (player.HeldItem.useTime / PlayerHooks.TotalUseTimeMultiplier(player, player.HeldItem)); 
-			if (mode == 1)
-			{ player.itemTime = (int)(newItemTime * (player.wallSpeed) * 0.5f); }
-			else
-			{ player.itemTime = (int)(newItemTime * (player.tileSpeed) * 0.5f); }
-			player.itemTime = Math.Max(1, player.itemTime);
-            
+
+            // Place twice as fast
+            float newItemTime = (player.HeldItem.useTime / PlayerHooks.TotalUseTimeMultiplier(player, player.HeldItem));
+            if (mode == 1)
+            { player.itemTime = (int)(newItemTime * (player.wallSpeed) * 0.5f); }
+            else
+            { player.itemTime = (int)(newItemTime * (player.tileSpeed) * 0.5f); }
+            player.itemTime = Math.Max(1, player.itemTime);
+
             Main.PlaySound(7, -1, -1, 1, 1f, 0f);
 
             int tileX = target.Value.X;
@@ -110,7 +105,7 @@ namespace BuildPlanner
                 if (Main.netMode == 1)
                 { NetMessage.SendData(17, -1, -1, null, 14, tileX, tileY, 0f); }
 
-                if(half)
+                if (half)
                 {
                     WorldGen.PoundTile(tileX, tileY);
                     if (Main.netMode == 1)
@@ -119,7 +114,7 @@ namespace BuildPlanner
             }
             else
             {
-                Main.tile[tileX,tileY].wall = 0;
+                Main.tile[tileX, tileY].wall = 0;
                 WorldGen.PlaceWall(tileX, tileY, item.createWall, false);
                 WorldGen.paintWall(tileX, tileY, 0, true);
                 WallLoader.PlaceInWorld(tileX, tileY, item);
@@ -132,6 +127,17 @@ namespace BuildPlanner
             // Consume the item
             ConsumeTile(item);
             return true;
+        }
+
+        internal static byte RenovatorUseItemMode(Item item, byte mode)
+        {
+            if (item.createTile >= 0)
+            {
+                if (Main.tileSolid[item.createTile] && !Main.tileSolidTop[item.createTile]) mode = 0;
+                if (TileID.Sets.Platforms[item.createTile]) mode = 2;
+            }
+            else if (item.createWall >= 0) mode = 1;
+            return mode;
         }
 
         /// <summary> Check if player tile range is within block range </summary>

@@ -43,7 +43,7 @@ namespace BuildPlanner.Tiles
         public override void MouseOver(int i, int j)
         {
             Player player = Main.LocalPlayer;
-            if (player.HeldItem.createTile < 0 && player.HeldItem.createWall < 0) return;
+            if (MPlayer.RenovatorUseItemMode(player.HeldItem, 255) == 255) return;
             player.noThrow = 2;
             player.showItemIcon = true;
             player.showItemIcon2 = player.HeldItem.type;
