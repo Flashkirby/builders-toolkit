@@ -21,6 +21,9 @@ namespace BuildPlanner
             TreeCycler.localSnowCooldown = 0;
             TreeCycler.localJungleCooldown = 0;
         }
+        private bool storedHalfBrick = false;
+        private byte storedSlope = 0;
+        private int storedType = -1;
         public override bool PreItemCheck()
         {
             if (player.whoAmI != Main.myPlayer) return true;
@@ -52,6 +55,26 @@ namespace BuildPlanner
                 }
             }
 
+            if (player.HeldItem.createTile >= 0 && 
+                player.HeldItem.createTile != ScaffoldType && player.HeldItem.createTile != PlatformType)
+            {
+                storedHalfBrick = false;
+                storedSlope = 0;
+                storedType = -1;
+
+                if (
+                    (Main.tile[Player.tileTargetX, Player.tileTargetY].type == ScaffoldType
+                    && !TileID.Sets.Platforms[player.HeldItem.createTile])
+                    ||
+                    (Main.tile[Player.tileTargetX, Player.tileTargetY].type == PlatformType
+                    && TileID.Sets.Platforms[player.HeldItem.createTile]))
+                {
+                    storedType = player.HeldItem.createTile;
+                    storedHalfBrick = Main.tile[Player.tileTargetX, Player.tileTargetY].halfBrick();
+                    storedSlope = Main.tile[Player.tileTargetX, Player.tileTargetY].slope();
+                }
+            }
+
             return true;
         }
         public override void PostItemCheck()
@@ -62,6 +85,26 @@ namespace BuildPlanner
             {
                 Main.tileCut[ScaffoldType] = false;
                 Main.tileCut[PlatformType] = false;
+            }
+
+
+            if (player.HeldItem.createTile >= 0)
+            {
+                if (Main.tile[Player.tileTargetX, Player.tileTargetY].type == storedType)
+                {
+                    if (storedHalfBrick)
+                    {
+                        WorldGen.PoundTile(Player.tileTargetX, Player.tileTargetY);
+                        if (Main.netMode == 1)
+                        { NetMessage.SendData(17, -1, -1, null, 7, (float)Player.tileTargetX, (float)Player.tileTargetY, 1f); }
+                    }
+                    if (storedSlope > 0)
+                    {
+                        WorldGen.SlopeTile(Player.tileTargetX, Player.tileTargetY, storedSlope);
+                        if (Main.netMode == 1)
+                        { NetMessage.SendData(17, -1, -1, null, 14, (float)Player.tileTargetX, (float)Player.tileTargetY, storedSlope); }
+                    }
+                }
             }
         }
 
