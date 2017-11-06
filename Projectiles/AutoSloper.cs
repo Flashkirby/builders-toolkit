@@ -72,10 +72,10 @@ namespace BuildPlanner.Projectiles
                     for (int i = -1; i < 2; i += 2)
                     {
                         d = Dust.NewDustPerfect(new Point(x, y).ToWorldCoordinates(8 - 8 * i, 8 - 8 * i),
-                            DustID.t_Martian, new Vector2(2 * i, 0), 0, default(Color), 0.6f);
+                            133, new Vector2(2 * i, 0), 0, default(Color), 0.6f);
                         d.noGravity = true;
                         d = Dust.NewDustPerfect(new Point(x, y).ToWorldCoordinates(8 - 8 * i, 8 - 8 * i),
-                            DustID.t_Martian, new Vector2(0, 2 * i), 0, default(Color), 0.6f);
+                            133, new Vector2(0, 2 * i), 0, default(Color), 0.6f);
                         d.noGravity = true;
                     }
                 }
@@ -115,7 +115,7 @@ namespace BuildPlanner.Projectiles
                 // Direction Dust
                 for (int i = -1; i < 2; i += 2)
                 {
-                    Dust d = Dust.NewDustPerfect(new Point(x, y).ToWorldCoordinates(), DustID.t_Martian,
+                    Dust d = Dust.NewDustPerfect(new Point(x, y).ToWorldCoordinates(), 133,
                         default(Vector2), 0, default(Color), 0.6f);
                     Vector2 velocity = default(Vector2);
                     if (slope == Tile.Type_Halfbrick || slope == Tile.Type_SlopeUpRight)

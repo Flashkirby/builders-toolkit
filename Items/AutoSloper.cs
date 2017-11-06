@@ -9,7 +9,7 @@ namespace BuildPlanner.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Resonance Roller");
+            DisplayName.SetDefault("Brass Trowel");
             Tooltip.SetDefault("Hammers tiles into slopes\n<right> to remove slopes");
         }
         public const int tileRange = 8;
