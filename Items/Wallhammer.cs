@@ -20,7 +20,7 @@ namespace BuildPlanner.Items
             item.UseSound = SoundID.Item67;
             item.noMelee = true;
             item.useStyle = 5;
-            item.damage = 55;
+            item.damage = 30;
             item.autoReuse = true;
             item.useAnimation = 25;
             item.useTime = 24;
