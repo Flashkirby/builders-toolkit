@@ -14,7 +14,7 @@ Contents:
 
 Credits:
 Flashkirby99 - I am making this mod.
-San (O Barbaro Desenhista) - Canvas, Watering Can, The Architect item sprites. Mod icon foreground.
+San (O Barbaro Desenhista) - Canvas, Watering Can, The Architect item sprites. Mod icon toolbox.
 Fury - Giving the mod his blessings.
 Discord Regulars - General help, discussion and support. Thanks guys!
 
