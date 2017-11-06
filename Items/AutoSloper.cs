@@ -15,7 +15,7 @@ namespace BuildPlanner.Items
         public const int tileRange = 8;
         public override void SetDefaults()
         {
-            item.rare = 9;
+            item.rare = 6;
             item.UseSound = SoundID.Item1;
             item.useStyle = 1;
             item.useTurn = true;

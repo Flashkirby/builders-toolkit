@@ -20,7 +20,6 @@ namespace BuildPlanner.Items
             item.CloneDefaults(ItemID.Extractinator);
             item.createTile = mod.TileType<Tiles.Renovator>();
             item.rare = 9;
-
         }
 
         public override void AddRecipes()

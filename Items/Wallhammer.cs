@@ -15,7 +15,7 @@ namespace BuildPlanner.Items
         }
         public override void SetDefaults()
         {
-            item.rare = 10;
+            item.rare = 5;
             item.mana = 3;
             item.UseSound = SoundID.Item67;
             item.noMelee = true;
