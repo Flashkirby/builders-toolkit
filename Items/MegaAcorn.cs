@@ -9,7 +9,7 @@ namespace BuildPlanner.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Giant Acorn");
-            Tooltip.SetDefault("'What could make it grow?'");
+            Tooltip.SetDefault("Will not grow without help");
         }
         public override void SetDefaults()
         {
