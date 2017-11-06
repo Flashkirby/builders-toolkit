@@ -1,5 +1,5 @@
 author = Flashkirby99
-version = 0.1
+version = 1.0
 displayName = Builder's Toolbox
 homepage = https://forums.terraria.org/index.php?members/flashkirby99.10265/
 
