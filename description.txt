@@ -7,6 +7,7 @@ Contents:
 * Giant Acorn - Need a living tree? Plant one of these and water it. Crafted using alchemy.
 * Block/Wall Canvas - Scaffolding tools that increase placement range and mining for scaffolding blocks. Sold by the Goblin Tinkerer. 
 * Brass Trowel - Automatically slopes or un-slopes tiles in a 5x5 square. Sold by the Steampunker.
+* Brass Stepper - Automatically steps or un-steps tiles in a 5x5 square. Sold by the Steampunker.
 * Wonderhammer - Tool for destroying walls very quickly, if not very efficiently. Crafted from Hallowed Bars in Hardmode.
 * Topiary Terraformer - Used for cycling tree types in Forest, Snow and Jungle biomes. Singleplayer Only. Sold by the Dryad after defeating Plantera.
 * The Architect - Like the grand design, but for scaffolding. Face left or right for alternate placement styles. Crafted from a Laser Drill and other components.

@@ -26,7 +26,10 @@ namespace BuildPlanner
             { shop.item[nextSlot].SetDefaults(mod.ItemType<TileWand>()); nextSlot++; }
 
             if (type == NPCID.Steampunker)
-            { shop.item[nextSlot].SetDefaults(mod.ItemType<AutoSloper>()); nextSlot++; }
+            {
+                shop.item[nextSlot].SetDefaults(mod.ItemType<AutoSloper>()); nextSlot++;
+                shop.item[nextSlot].SetDefaults(mod.ItemType<AutoHalfBrick>()); nextSlot++;
+            }
         }
     }
 }
