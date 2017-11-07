@@ -83,9 +83,12 @@ namespace BuildPlanner.Projectiles
                     !WorldGen.SolidOrSlopedTile(x - 1, y - 1) &&
                     !WorldGen.SolidOrSlopedTile(x + 1, y - 1))
                 {
-                    bool left = WorldGen.SolidOrSlopedTile(x - 1, y);
+                    bool left = WorldGen.SolidOrSlopedTile(x - 1, y)
+                        || TileID.Sets.Platforms[Main.tile[x - 1, y].type];
                     bool leftDown = WorldGen.SolidOrSlopedTile(x - 1, y + 1);
-                    bool right = WorldGen.SolidOrSlopedTile(x + 1, y);
+
+                    bool right = WorldGen.SolidOrSlopedTile(x + 1, y)
+                        || TileID.Sets.Platforms[Main.tile[x + 1, y].type];
                     bool rightDown = WorldGen.SolidOrSlopedTile(x + 1, y + 1);
 
                     if ((!left && leftDown) || (!right && rightDown))

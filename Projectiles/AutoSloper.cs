@@ -85,8 +85,8 @@ namespace BuildPlanner.Projectiles
             if (t.slope() == Tile.Type_Solid)
             {
                 // Check adjacent blocks
-                bool left = WorldGen.SolidOrSlopedTile(x - 1, y);
-                bool right = WorldGen.SolidOrSlopedTile(x + 1, y);
+                bool left = WorldGen.SolidOrSlopedTile(x - 1, y) || TileID.Sets.Platforms[Main.tile[x - 1, y].type];
+                bool right = WorldGen.SolidOrSlopedTile(x + 1, y) || TileID.Sets.Platforms[Main.tile[x + 1, y].type];
                 bool top = WorldGen.SolidOrSlopedTile(x, y - 1);
                 bool bottom = WorldGen.SolidOrSlopedTile(x, y + 1);
                 int slope = 0;
