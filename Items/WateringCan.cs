@@ -50,6 +50,8 @@ namespace BuildPlanner.Items
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
+            speedX += player.velocity.X / 2;
+            speedY += player.velocity.Y / 2;
             Projectile.NewProjectile(position, new Vector2(speedX, speedY), item.shoot, 0, 0f, player.whoAmI, 0, Main.rand.Next(0, 65536));
             return false;
         }

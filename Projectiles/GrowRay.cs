@@ -19,28 +19,32 @@ namespace BuildPlanner.Projectiles
             projectile.penetrate = -1;
             projectile.friendly = true;
             projectile.timeLeft = 26;
+            projectile.alpha = 255;
         }
 
         public override void AI()
         {
             projectile.velocity.Y += 0.2f;
-
-
+            
             if ((int)(projectile.localAI[0] + 2) % 3 == 0)
             {
                 CheckTileGrowth();
             }
-            projectile.localAI[0]++;
 
-            for (int i = 0; i < 2; i++)
+            if (projectile.localAI[0] > 3)
             {
-                Dust d = Dust.NewDustDirect(projectile.Center, 0, 0, 110,
-                    projectile.velocity.X * 0.5f, projectile.velocity.Y * 0.5f);
-                d.velocity *= 1.5f;
-                d.scale = 0.4f;
-                d.fadeIn = 0.9f;
-                d.noGravity = true;
+                for (int i = 0; i < 2; i++)
+                {
+                    Dust d = Dust.NewDustDirect(projectile.Center, 0, 0, 110,
+                        projectile.velocity.X * 0.5f, projectile.velocity.Y * 0.5f);
+                    d.velocity *= 1.5f;
+                    d.scale = 0.4f;
+                    d.fadeIn = 0.9f;
+                    d.noGravity = true;
+                }
             }
+
+            projectile.localAI[0]++;
         }
         private void CheckTileGrowth()
         {
