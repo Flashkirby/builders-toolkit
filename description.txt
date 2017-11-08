@@ -2,6 +2,7 @@ Tools to help plan builds. Want to design a house, but haven't the materials yet
 
 Contents:
 * Scaffolding - Places faster than normal tiles, and can be directly replaced later. Crafted at a workbench. 
+* Fire Moss Seeds - Crafted with Blinkroot Seeds near Lava. 
 * Sledgehammer - Tears down scaffolding by swinging. Sold by the Demolitionist.
 * Watering Can - Causes plants to grow, from grass to herbs to saplings. Sold by the Dryad.
 * Giant Acorn - Need a living tree? Plant one of these and water it. Crafted using alchemy.
