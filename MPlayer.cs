@@ -33,29 +33,71 @@ namespace BuildPlanner
             if (TreeCycler.localSnowCooldown > 0) TreeCycler.localSnowCooldown--;
             if (TreeCycler.localJungleCooldown > 0) TreeCycler.localJungleCooldown--;
 
+            AddScaffoldCuttable();
+
+            CheckRenovatorTile();
+
+            ScaffoldSlopeSetup();
+
+            return true;
+        }
+
+        public override void PostItemCheck()
+        {
+            if (player.whoAmI != Main.myPlayer) return;
+
+            RemoveScaffoldCuttable();
+
+            ScaffoldSlopeReplace();
+            
+            FireMossPlacement(player);
+        }
+
+        internal void FireMossPlacement(Player player)
+        {
+            if (player.HeldItem.type == mod.ItemType<FireMossSeeds>())
+            {
+                if (player.toolTime == 0 && player.controlUseItem)
+                {
+                    Item item = player.HeldItem;
+                    if (player.whoAmI == Main.myPlayer &&
+                        FireMossSeeds.ValidTarget(Player.tileTargetX, Player.tileTargetY))
+                    {
+                        if (WorldGen.PlaceTile(Player.tileTargetX, Player.tileTargetY, item.createTile, false, true, player.whoAmI))
+                        {
+                            player.ConsumeItem(mod.ItemType<FireMossSeeds>());
+                            NetMessage.SendData(17, -1, -1, null, 1,
+                                (float)Player.tileTargetX, (float)Player.tileTargetY,
+                                (float)item.createTile, 0);
+                            player.toolTime = (int)((float)item.useTime * player.tileSpeed / PlayerHooks.TotalUseTimeMultiplier(player, item));
+                            player.itemTime = player.toolTime;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void AddScaffoldCuttable()
+        {
             // Demolition Hammer removes scaffolding super ez
             if (ScaffoldType > 0 && player.HeldItem.type == mod.ItemType<Items.SledgeHammer>())
             {
                 Main.tileCut[ScaffoldType] = true;
                 Main.tileCut[PlatformType] = true;
             }
-            
-            // Renovator
-            if ((player.HeldItem.createTile >= 0 || player.HeldItem.createWall >= 0) &&
-                Main.tile[Player.tileTargetX, Player.tileTargetY].active() &&
-                Main.tile[Player.tileTargetX, Player.tileTargetY].type == mod.TileType<Tiles.Renovator>())
+        }
+        private void RemoveScaffoldCuttable()
+        {
+            if (ScaffoldType > 0 && Main.tileCut[ScaffoldType])
             {
-                if (TileTargetInRange()) // can actually place
-                {
-                    player.noBuilding = true; // prevent placing. unfortunately doesn't stop wall placement
-                    if (player.itemTime == 0 && player.itemAnimation > 0 && player.controlUseItem)
-                    {
-                        UseRenovator(player.HeldItem, Main.tile[Player.tileTargetX, Player.tileTargetY].color());
-                    }
-                }
+                Main.tileCut[ScaffoldType] = false;
+                Main.tileCut[PlatformType] = false;
             }
-
-            if (player.HeldItem.createTile >= 0 && 
+        }
+        
+        private void ScaffoldSlopeSetup()
+        {
+            if (player.HeldItem.createTile >= 0 &&
                 player.HeldItem.createTile != ScaffoldType && player.HeldItem.createTile != PlatformType)
             {
                 storedHalfBrick = false;
@@ -74,20 +116,9 @@ namespace BuildPlanner
                     storedSlope = Main.tile[Player.tileTargetX, Player.tileTargetY].slope();
                 }
             }
-
-            return true;
         }
-        public override void PostItemCheck()
+        private void ScaffoldSlopeReplace()
         {
-            if (player.whoAmI != Main.myPlayer) return;
-
-            if (ScaffoldType > 0 && Main.tileCut[ScaffoldType])
-            {
-                Main.tileCut[ScaffoldType] = false;
-                Main.tileCut[PlatformType] = false;
-            }
-
-
             if (player.HeldItem.createTile >= 0)
             {
                 if (Main.tile[Player.tileTargetX, Player.tileTargetY].type == storedType)
@@ -103,6 +134,25 @@ namespace BuildPlanner
                         WorldGen.SlopeTile(Player.tileTargetX, Player.tileTargetY, storedSlope);
                         if (Main.netMode == 1)
                         { NetMessage.SendData(17, -1, -1, null, 14, (float)Player.tileTargetX, (float)Player.tileTargetY, storedSlope); }
+                    }
+                }
+            }
+        }
+
+        #region Renovator
+        private void CheckRenovatorTile()
+        {
+            // Renovator
+            if ((player.HeldItem.createTile >= 0 || player.HeldItem.createWall >= 0) &&
+                Main.tile[Player.tileTargetX, Player.tileTargetY].active() &&
+                Main.tile[Player.tileTargetX, Player.tileTargetY].type == mod.TileType<Tiles.Renovator>())
+            {
+                if (TileTargetInRange()) // can actually place
+                {
+                    player.noBuilding = true; // prevent placing. unfortunately doesn't stop wall placement
+                    if (player.itemTime == 0 && player.itemAnimation > 0 && player.controlUseItem)
+                    {
+                        UseRenovator(player.HeldItem, Main.tile[Player.tileTargetX, Player.tileTargetY].color());
                     }
                 }
             }
@@ -229,7 +279,7 @@ namespace BuildPlanner
                     else if (mode == 1 && t.wall != mod.WallType<Tiles.ScaffoldWall>()) continue;
                     else if (mode == 2 && t.type != mod.TileType<Tiles.ScaffoldPlatform>()) continue;
 
-                    // Otherwise yeah let's do this
+                    // Otherwise yeah let's do Main.LocalPlayer
                     Vector2 source = new Point(Player.tileTargetX, Player.tileTargetY).ToWorldCoordinates();
                     Vector2 target = new Point(tileX, tileY).ToWorldCoordinates();
                     Dust d = Dust.NewDustPerfect(source, 170, (target - source) * new Vector2(0.086f, 0.08f), 0, default(Color), 1.5f);
@@ -303,5 +353,7 @@ namespace BuildPlanner
                 }
             }
         }
+        #endregion
+
     }
 }
