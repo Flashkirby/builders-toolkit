@@ -35,3 +35,6 @@ https://forums.terraria.org/index.php?threads/bulldozer.54110/
 Utility Bombs - Bombs that explode into useful things, like water.
 https://forums.terraria.org/index.php?threads/utility-bombs.53608/
 	
+TODO:
+Fire moss no consume when used from inventory
+Grave smasher
